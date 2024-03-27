@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PlaylistHasSong index{% endblock %}
+
+{% block body %}
+    <h1>PlaylistHasSong index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Download</th>
+                <th>Position</th>
+                <th>CreateAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for playlist_has_song in playlist_has_songs %}
+            <tr>
+                <td>{{ playlist_has_song.id }}</td>
+                <td>{{ playlist_has_song.download ? 'Yes' : 'No' }}</td>
+                <td>{{ playlist_has_song.position }}</td>
+                <td>{{ playlist_has_song.createAt ? playlist_has_song.createAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_playlist_has_song_show', {'id': playlist_has_song.id}) }}">show</a>
+                    <a href="{{ path('app_playlist_has_song_edit', {'id': playlist_has_song.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_playlist_has_song_new') }}">Create new</a>
+{% endblock %}

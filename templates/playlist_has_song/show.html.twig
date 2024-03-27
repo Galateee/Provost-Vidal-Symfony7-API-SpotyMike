@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PlaylistHasSong{% endblock %}
+
+{% block body %}
+    <h1>PlaylistHasSong</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ playlist_has_song.id }}</td>
+            </tr>
+            <tr>
+                <th>Download</th>
+                <td>{{ playlist_has_song.download ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Position</th>
+                <td>{{ playlist_has_song.position }}</td>
+            </tr>
+            <tr>
+                <th>CreateAt</th>
+                <td>{{ playlist_has_song.createAt ? playlist_has_song.createAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_playlist_has_song_index') }}">back to list</a>
+
+    <a href="{{ path('app_playlist_has_song_edit', {'id': playlist_has_song.id}) }}">edit</a>
+
+    {{ include('playlist_has_song/_delete_form.html.twig') }}
+{% endblock %}
