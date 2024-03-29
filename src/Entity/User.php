@@ -144,4 +144,17 @@ class User
 
         return $this;
     }
+
+    public function serializer()
+    {
+        return [
+            "id" => $this->getId(),
+            "idUser" => $this->getIdUser(),
+            "name" => $this->getName(),
+            "email" => $this->getEmail(),
+            "tel" => $this->getTel(),
+            "createAt" => $this->getCreateAt(),
+            "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [],
+        ];
+    }
 }

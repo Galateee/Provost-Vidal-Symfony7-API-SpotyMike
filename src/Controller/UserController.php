@@ -3,79 +3,94 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserType;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
-#[Route('/user')]
 class UserController extends AbstractController
 {
-    #[Route('/', name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    private $repository;
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager){
+        $this->entityManager = $entityManager;
+        $this->repository = $entityManager->getRepository(User::class);
+    }
+
+    #[Route('/user', name: 'user_post', methods: 'POST')]
+    public function create(Request $request): JsonResponse
     {
-        return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+        return $this->json([
+            'message' => 'Welcome to your new controller!',
+            'path' => 'src/Controller/UserController.php',
         ]);
     }
 
-    #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/user', name: 'user_put', methods: 'PUT')]
+    public function update(): JsonResponse
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+        $phone = "0668000000";
+        if(preg_match("/^[0-9]{10}$/", $phone)) {
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            $user = $this->repository->findOneBy(["id"=>1]);
+            $old = $user->getTel();
+            $user->setTel($phone);
+            $this->entityManager->flush();
+            return $this->json([
+                "New_tel" => $user->getTel(),
+                "Old_tel" => $old,
+                "user" => $user->serializer(),
+            ]);
         }
+    }
 
-        return $this->render('user/new.html.twig', [
-            'user' => $user,
-            'form' => $form,
+    #[Route('/user', name: 'user_delete', methods: 'DELETE')]
+    public function delete(): JsonResponse
+    {
+        $this->entityManager->remove($this->repository->findOneBy(["id"=>1]));
+        $this->entityManager->flush();
+        return $this->json([
+            'message' => 'Welcome to your new controller!',
+            'path' => 'src/Controller/UserController.php',
         ]);
     }
 
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): Response
+    #[Route('/user', name: 'user_get', methods: 'GET')]
+    public function read(): JsonResponse
     {
-        return $this->render('user/show.html.twig', [
-            'user' => $user,
+
+
+        $serializer = new Serializer([new ObjectNormalizer()]);
+        // $jsonContent = $serializer->serialize($person, 'json');
+        return $this->json([
+            'message' => 'Welcome to your new controller!',
+            'path' => 'src/Controller/UserController.php',
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    #[Route('/user/all', name: 'user_get_all', methods: 'GET')]
+    public function readAll(): JsonResponse
     {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+        $result = [];
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        try {
+            if (count($users = $this->repository->findAll()) > 0)
+                foreach ($users as $user) {
+                    array_push($result, $user->serializer());
+                }
+            return new JsonResponse([
+                'data' => $result,
+                'message' => 'Successful'
+            ], 400);
+        } catch (\Exception $exception) {
+            return new JsonResponse([
+                'message' => $exception->getMessage()
+            ], 404);
         }
-
-        return $this->render('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 }
