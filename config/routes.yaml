@@ -3,28 +3,3 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
-
-# Routes for CRUD controllers
-app_album:
-    resource: '../src/Controller/AlbumController.php'
-    type: attribute
-
-app_artist:
-    resource: '../src/Controller/ArtistController.php'
-    type: attribute
-
-app_playlist:
-    resource: '../src/Controller/PlaylistController.php'
-    type: attribute
-
-app_playlist_has_song:
-    resource: '../src/Controller/PlaylistHasSongController.php'
-    type: attribute
-
-app_song:
-    resource: '../src/Controller/SongController.php'
-    type: attribute
-
-app_user:
-    resource: '../src/Controller/UserController.php'
-    type: attribute
