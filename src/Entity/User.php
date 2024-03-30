@@ -30,7 +30,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $sexe = null;
 
     #[ORM\Column(length: 55)]
-    private ?\Date $dateBirth = null;
+    private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 80, unique:true)]
     private ?string $email = null;
@@ -68,50 +68,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getfirstName(): ?string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    public function setfirstName(string $firstName): static
+    public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
 
         return $this;
     }
 
-    public function getlastName(): ?string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
-    public function setlastName(string $lastName): static
+    public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function getsexe(): ?string
+    public function getSexe(): ?string
     {
         return $this->sexe;
     }
 
-    public function setsexe(string $sexe): static
+    public function setSexe(string $sexe): static
     {
         $this->sexe = $sexe;
 
         return $this;
     }
 
-    public function getdateBirth(): ?\Date
+    public function getBirthDate(): ?\DateTimeImmutable
     {
-        return $this->dateBirth;
+        return $this->birthDate;
     }
 
-    public function setdateBirth(\Date $dateBirth): static
+    public function setBirthDate(\DateTimeImmutable $birthDate): static
     {
-        $this->dateBirth = $dateBirth;
+        $this->birthDate = $birthDate;
 
         return $this;
     }
@@ -211,7 +211,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return [
             "id" => $this->getId(),
             "idUser" => $this->getIdUser(),
-            "name" => $this->getName(),
+            "firstName" => $this->getFirstName(),
+            "lastName" => $this->getLastName(),
+            "sexe" => $this->getSexe(),
+            "birthDate" => $this->getBirthDate(),
             "email" => $this->getEmail(),
             "tel" => $this->getTel(),
             "createAt" => $this->getCreateAt(),
