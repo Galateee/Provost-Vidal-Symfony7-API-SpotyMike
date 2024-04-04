@@ -20,8 +20,17 @@ class Artist
     #[ORM\JoinColumn(nullable: false)]
     private ?User $User_idUser = null;
 
-    #[ORM\Column(length: 90)]
-    private ?string $fullname = null;
+    #[ORM\Column(length: 55)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 55)]
+    private ?string $lastName = null;
+
+    #[ORM\Column(length: 55)]
+    private ?string $sexe = null;
+
+    #[ORM\Column(length: 55)]
+    private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 90)]
     private ?string $label = null;
@@ -58,14 +67,50 @@ class Artist
         return $this;
     }
 
-    public function getFullname(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->fullname;
+        return $this->firstName;
     }
 
-    public function setFullname(string $fullname): static
+    public function setFirstName(string $firstName): static
     {
-        $this->fullname = $fullname;
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): static
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getSexe(): ?string
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(string $sexe): static
+    {
+        $this->sexe = $sexe;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeImmutable
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(\DateTimeImmutable $birthDate): static
+    {
+        $this->birthDate = $birthDate;
 
         return $this;
     }
@@ -156,7 +201,10 @@ class Artist
         return [
             "id" => $this->getId(),
             "idUser" => ($children) ? $this->getUserIdUser() : null,
-            "fullname" => $this->getFullname(),
+            "firstName" => $this->getFirstName(),
+            "lastName" => $this->getLastName(),
+            "sexe" => $this->getSexe(),
+            "birthDate" => $this->getBirthDate(),
             "label" => $this->getLabel(),
             "description" => $this->getDescription(),
             "songs" => $this->getSongs()
