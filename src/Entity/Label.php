@@ -16,6 +16,9 @@ class Label
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 90)]
+    private ?string $idLabel = null;
+
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
@@ -34,6 +37,18 @@ class Label
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getIdLabel(): ?string
+    {
+        return $this->idLabel;
+    }
+
+    public function setIdLabel(string $idLabel): static
+    {
+        $this->idLabel = $idLabel;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -85,6 +100,16 @@ class Label
         }
 
         return $this;
+    }
+
+    public function serializer($children = false)
+    {
+        return [
+            "id" => $this->getId(),
+            "idLabel" => ($children) ? $this->getIdLabel() : null,
+            "name" => $this->getName(),
+            "year" => $this->getYear()
+        ];
     }
 
     /**

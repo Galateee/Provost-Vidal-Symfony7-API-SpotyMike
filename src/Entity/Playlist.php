@@ -120,6 +120,18 @@ class Playlist
         return $this;
     }
 
+    public function serializer($children = false)
+    {
+        return [
+            "id" => $this->getId(),
+            "idPlaylist" => ($children) ? $this->getIdPlaylist() : null,
+            "title" => $this->getTitle(),
+            "public" => $this->isPublic(),
+            "createAt" => $this->getCreateAt(),
+            "updateAt" => $this->getUpdateAt()
+        ];
+    }
+
     /**
      * @return Collection<int, User>
      */

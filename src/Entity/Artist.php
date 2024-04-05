@@ -41,9 +41,6 @@ class Artist
     #[ORM\OneToMany(targetEntity: Album::class, mappedBy: 'artist_User_idUser')]
     private Collection $albums;
 
-    #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'artistsLabel_id')]
-    private Collection $label_id;
-
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'user_follow_artist')]
     private Collection $Artist_isFollow;
 

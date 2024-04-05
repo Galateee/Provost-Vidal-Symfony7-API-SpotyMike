@@ -19,10 +19,10 @@ class Album
     private ?string $idAlbum = null;
 
     #[ORM\Column(length: 90)]
-    private ?string $nom = null;
+    private ?string $name = null;
 
     #[ORM\Column(length: 20)]
-    private ?string $categ = null;
+    private ?string $category = null;
 
     #[ORM\Column(length: 125)]
     private ?string $cover = null;
@@ -58,26 +58,26 @@ class Album
         return $this;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): static
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getCateg(): ?string
+    public function getCategory(): ?string
     {
-        return $this->categ;
+        return $this->category;
     }
 
-    public function setCateg(string $categ): static
+    public function setCategory(string $category): static
     {
-        $this->categ = $categ;
+        $this->category = $category;
 
         return $this;
     }
@@ -116,6 +116,18 @@ class Album
         $this->artist_User_idUser = $artist_User_idUser;
 
         return $this;
+    }
+
+    public function serializer($children = false)
+    {
+        return [
+            "id" => $this->getId(),
+            "idAlbum" => ($children) ? $this->getIdAlbum() : null,
+            "name" => $this->getName(),
+            "category" => $this->getCategory(),
+            "cover" => $this->getCover(),
+            "year" => $this->getYear()
+        ];
     }
 
     /**

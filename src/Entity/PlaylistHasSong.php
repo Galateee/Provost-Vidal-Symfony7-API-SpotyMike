@@ -43,6 +43,7 @@ class PlaylistHasSong
         return $this->id;
     }
 
+
     /**
      * @return Collection<int, Playlist>
      */
@@ -137,5 +138,15 @@ class PlaylistHasSong
         $this->createAt = $createAt;
 
         return $this;
+    }
+
+    public function serializer($children = false)
+    {
+        return [
+            "id" => $this->getId(),
+            "download" => $this->isDownload(),
+            "position" => $this->getPosition(),
+            "createAt" => $this->getCreateAt()
+        ];
     }
 }
