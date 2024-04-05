@@ -94,4 +94,15 @@ class ArtistHasLabel
 
         return $this;
     }
+
+    public function serializer($children = false)
+    {
+        return [
+            "id" => $this->getId(),
+            "createYear" => $this->getCreateYear(),
+            "deleteYear" => $this->getDeleteYear(),
+            "idLabel" => ($children) ? $this->getIdLabel() : null,
+            "idArtist" => ($children) ? $this->getIdArtist() : null
+        ];
+    }
 }

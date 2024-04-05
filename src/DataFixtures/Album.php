@@ -2,6 +2,9 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\User;
+use App\Entity\Album as EntityAlbum;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -27,12 +30,12 @@ class Album extends Fixture
         for ($i=0; $i < 6; $i++) { 
            
             $album = new EntityAlbum();
-            $album->setFullName("Artist_".rand(0,999));
-            $album->setSexe("Artist_".rand(0,999));
-            $album->setBirthDate(new DateTimeImmutable());
-            $album->setlabel("Artist_".rand(0,999));
-            $album->setUserIdUser($user);
-            $manager->persist($album);
+            $album->setName("Album_".rand(0,999));
+            $album->setCategory("Album_".rand(0,999));           
+            $album->setCover("Album".rand(0,999));
+            $album->setYear(new DateTimeImmutable());
+            $album->setIdAlbum($user);
+            $manager->persist($album);   
         }
         $manager->flush();
     }
