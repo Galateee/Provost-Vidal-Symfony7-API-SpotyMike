@@ -30,8 +30,7 @@ class Artist extends Fixture
         for ($i=0; $i < 6; $i++) { 
            
             $artist = new EntityArtist();
-            $artist->setFirstName("Artist_".rand(0,999));
-            $artist->setLastName("Artist_".rand(0,999));
+            $artist->setFullName("Artist_".rand(0,999));
             $artist->setSexe("Artist_".rand(0,999));
             $artist->setBirthDate(new DateTimeImmutable());
             $artist->setlabel("Artist_".rand(0,999));

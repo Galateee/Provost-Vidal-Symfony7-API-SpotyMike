@@ -21,10 +21,7 @@ class Artist
     private ?User $User_idUser = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $firstName = null;
-
-    #[ORM\Column(length: 55)]
-    private ?string $lastName = null;
+    private ?string $fullName = null;
 
     #[ORM\Column(length: 55)]
     private ?string $sexe = null;
@@ -67,26 +64,14 @@ class Artist
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getFullName(): ?string
     {
-        return $this->firstName;
+        return $this->fullName;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFullName(string $fullName): static
     {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): static
-    {
-        $this->lastName = $lastName;
+        $this->fullName = $fullName;
 
         return $this;
     }
@@ -201,8 +186,7 @@ class Artist
         return [
             "id" => $this->getId(),
             "idUser" => ($children) ? $this->getUserIdUser() : null,
-            "firstName" => $this->getFirstName(),
-            "lastName" => $this->getLastName(),
+            "fullName" => $this->getFullName(),
             "sexe" => $this->getSexe(),
             "birthDate" => $this->getBirthDate(),
             "label" => $this->getLabel(),
