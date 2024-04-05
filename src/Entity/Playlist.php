@@ -35,8 +35,13 @@ class Playlist
     #[ORM\ManyToOne(inversedBy: 'Playlist_idPlaylist')]
     private ?PlaylistHasSong $playlistHasSong = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'User_share_Playlist')]
+    private Collection $playlist_isShare;
+
     public function __construct()
-    {}
+    {
+        $this->playlist_isShare = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -111,6 +116,33 @@ class Playlist
     public function setPlaylistHasSong(?PlaylistHasSong $playlistHasSong): static
     {
         $this->playlistHasSong = $playlistHasSong;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getPlaylistIsShare(): Collection
+    {
+        return $this->playlist_isShare;
+    }
+
+    public function addPlaylistIsShare(User $playlistIsShare): static
+    {
+        if (!$this->playlist_isShare->contains($playlistIsShare)) {
+            $this->playlist_isShare->add($playlistIsShare);
+            $playlistIsShare->addUserSharePlaylist($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlaylistIsShare(User $playlistIsShare): static
+    {
+        if ($this->playlist_isShare->removeElement($playlistIsShare)) {
+            $playlistIsShare->removeUserSharePlaylist($this);
+        }
 
         return $this;
     }

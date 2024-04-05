@@ -22,6 +22,7 @@ class PlaylistHasSong
     #[ORM\OneToMany(targetEntity: Song::class, mappedBy: 'playlistHasSong')]
     private Collection $Song_idSong;
 
+
     #[ORM\Column(nullable: true)]
     private ?bool $download = null;
 

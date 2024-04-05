@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
@@ -40,6 +42,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'User_idUser', cascade: ['persist', 'remove'])]
     private ?Artist $artist = null;
+
+    #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'Artist_isFollow')]
+    private Collection $user_follow_artist;
+
+    #[ORM\ManyToMany(targetEntity: Playlist::class, inversedBy: 'playlist_isShare')]
+    private Collection $User_share_Playlist;
+
+    public function __construct()
+    {
+        $this->user_follow_artist = new ArrayCollection();
+        $this->User_share_Playlist = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -149,7 +163,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array{
 
-        return [];
+        return ["PUBLIC_ACCESS"];
     }
 
     public function eraseCredentials(): void{
@@ -171,5 +185,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             "createAt" => $this->getCreateAt(),
             "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [],
         ];
+    }
+
+    /**
+     * @return Collection<int, Artist>
+     */
+    public function getUserFollowArtist(): Collection
+    {
+        return $this->user_follow_artist;
+    }
+
+    public function addUserFollowArtist(Artist $userFollowArtist): static
+    {
+        if (!$this->user_follow_artist->contains($userFollowArtist)) {
+            $this->user_follow_artist->add($userFollowArtist);
+        }
+
+        return $this;
+    }
+
+    public function removeUserFollowArtist(Artist $userFollowArtist): static
+    {
+        $this->user_follow_artist->removeElement($userFollowArtist);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Playlist>
+     */
+    public function getUserSharePlaylist(): Collection
+    {
+        return $this->User_share_Playlist;
+    }
+
+    public function addUserSharePlaylist(Playlist $userSharePlaylist): static
+    {
+        if (!$this->User_share_Playlist->contains($userSharePlaylist)) {
+            $this->User_share_Playlist->add($userSharePlaylist);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSharePlaylist(Playlist $userSharePlaylist): static
+    {
+        $this->User_share_Playlist->removeElement($userSharePlaylist);
+
+        return $this;
     }
 }

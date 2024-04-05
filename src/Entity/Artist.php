@@ -35,10 +35,22 @@ class Artist
     #[ORM\OneToMany(targetEntity: Album::class, mappedBy: 'artist_User_idUser')]
     private Collection $albums;
 
+    #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'artistsLabel_id')]
+    private Collection $label_id;
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'user_follow_artist')]
+    private Collection $Artist_isFollow;
+
+    #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'Label_forArtist')]
+    private Collection $Artist_Has_Label;
+
     public function __construct()
     {
         $this->songs = new ArrayCollection();
         $this->albums = new ArrayCollection();
+        $this->label_id = new ArrayCollection();
+        $this->Artist_isFollow = new ArrayCollection();
+        $this->Artist_Has_Label = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -161,5 +173,80 @@ class Artist
             "description" => $this->getDescription(),
             "songs" => $this->getSongs()
         ];
+    }
+
+    /**
+     * @return Collection<int, Label>
+     */
+    public function getLabelId(): Collection
+    {
+        return $this->label_id;
+    }
+
+    public function addLabelId(Label $labelId): static
+    {
+        if (!$this->label_id->contains($labelId)) {
+            $this->label_id->add($labelId);
+        }
+
+        return $this;
+    }
+
+    public function removeLabelId(Label $labelId): static
+    {
+        $this->label_id->removeElement($labelId);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getArtistIsFollow(): Collection
+    {
+        return $this->Artist_isFollow;
+    }
+
+    public function addArtistIsFollow(User $artistIsFollow): static
+    {
+        if (!$this->Artist_isFollow->contains($artistIsFollow)) {
+            $this->Artist_isFollow->add($artistIsFollow);
+            $artistIsFollow->addUserFollowArtist($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArtistIsFollow(User $artistIsFollow): static
+    {
+        if ($this->Artist_isFollow->removeElement($artistIsFollow)) {
+            $artistIsFollow->removeUserFollowArtist($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Label>
+     */
+    public function getArtistHasLabel(): Collection
+    {
+        return $this->Artist_Has_Label;
+    }
+
+    public function addArtistHasLabel(Label $artistHasLabel): static
+    {
+        if (!$this->Artist_Has_Label->contains($artistHasLabel)) {
+            $this->Artist_Has_Label->add($artistHasLabel);
+        }
+
+        return $this;
+    }
+
+    public function removeArtistHasLabel(Label $artistHasLabel): static
+    {
+        $this->Artist_Has_Label->removeElement($artistHasLabel);
+
+        return $this;
     }
 }
