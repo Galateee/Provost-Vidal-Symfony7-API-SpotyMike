@@ -2,16 +2,17 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Artist;
-use App\Entity\User as EntityUser;
+use App\Entity\User;
+use App\Entity\Artist as EntityArtist;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class User extends Fixture
+class Artist extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+           
         for ($i=0; $i < 6; $i++) { 
            
             $user = new EntityUser();
@@ -25,6 +26,16 @@ class User extends Fixture
             $user->setUpdateAt(new DateTimeImmutable()); 
             $user->setPassword("$2y$".rand(0,999999999999999999));
             $manager->persist($user);
+        }
+        for ($i=0; $i < 6; $i++) { 
+           
+            $artist = new EntityArtist();
+            $artist->setFullName("Artist_".rand(0,999));
+            $artist->setSexe("Artist_".rand(0,999));
+            $artist->setBirthDate(new DateTimeImmutable());
+            $artist->setlabel("Artist_".rand(0,999));
+            $artist->setUserIdUser($user);
+            $manager->persist($artist);
         }
         $manager->flush();
     }
