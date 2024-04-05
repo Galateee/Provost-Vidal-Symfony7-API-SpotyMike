@@ -7,6 +7,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
 use DateTime;
@@ -95,14 +97,15 @@ class RegisterController extends AbstractController
                return $this->exceptionManager->minimumAgeNotMet();
           }
 
-          // Validation du format de téléphone
-          if (!preg_match('/^\+?\d{8,15}$/', $data['tel'])) {
+          // Validation du format de téléphone (format français)
+          $tel = $data['tel'];
+          if ($tel !== '' && !preg_match('/^0[1-9]([0-9]{2}){4}$/', $tel)) {
                return $this->exceptionManager->invalidPhoneNumberFormat();
           }
 
           // Validation du sexe
-          $gender = $data['sexe'];
-          if ($gender !== '0' && $gender !== '1' && $gender !== '') {
+          $allowedGenders = ['0', '1', '']; // 0 pour femme, 1 pour homme, '' pour non spécifié
+          if (!in_array($data['sexe'], $allowedGenders)) {
                return $this->exceptionManager->invalidGenderValue();
           }
 
