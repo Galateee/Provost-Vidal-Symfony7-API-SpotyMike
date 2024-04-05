@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ExceptionManager
 {
-    public function missingData(): JsonResponse
+    public function missingEmailOrPassword(): JsonResponse
     {
         return new JsonResponse(['error' => 'true','message' => 'Email/password manquants'], 400);
     }
@@ -24,6 +24,11 @@ class ExceptionManager
     public function inactiveAccount(): JsonResponse
     {
         return new JsonResponse(['error' => 'true','message' => 'Le compte n\'est plus actif ou est suspendu.'], 403);
+    }
+
+    public function invalidPassword(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Mot de passe incorrect.'], 400 );
     }
 
     public function maxPasswordTry(): JsonResponse
