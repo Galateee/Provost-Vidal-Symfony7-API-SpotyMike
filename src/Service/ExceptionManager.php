@@ -6,9 +6,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ExceptionManager
 {
-    public function missingEmailOrPassword(): JsonResponse
+    public function missingData(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Email/password manquants'], 400);
+        return new JsonResponse(['error' => 'true','message' => 'Des champs obligatoires sont manquants.'], 400);
     }
 
     public function invalidEmail(): JsonResponse
@@ -36,35 +36,37 @@ class ExceptionManager
      return new JsonResponse(['error' => 'true','message' => 'Trop de tentatives de connexion (5 max). Veuillez réessayer ultérieurement - xxx min d\'attente'], 429);
     }
     
-    public function invalidBirthdateFormat(): JsonResponse
+    public function invalidDateOfBirthFormat(): JsonResponse
     {
      return new JsonResponse(['error' => 'true','message' => 'Le format de la date de naissance est invalide. Le format attendu est JJ/MM/AAAA.'], 400);
     }
 
-    public function invalidMinimumAge(): JsonResponse
+    public function minimumAgeNotMet(): JsonResponse
     {
      return new JsonResponse(['error' => 'true','message' => 'L\'utilisateur doit avoir au moins 12 ans.'], 400);
     }
 
-    public function invalidPhoneFormat(): JsonResponse
+    public function invalidPhoneNumberFormat(): JsonResponse
     {
      return new JsonResponse(['error' => 'true','message' => 'Le format du numéro de téléphone est invalide.'], 400);
     }
     
-    public function invalidSex(): JsonResponse
+    public function invalidGenderValue(): JsonResponse
     {
      return new JsonResponse(['error' => 'true','message' => 'La valeur du champ sexe est invalide. Les valeurs autorisées sont 0 pour Femme, 1 pour Homme.'], 400);
     }
     
-    public function EmailAllreadyUse(): JsonResponse
+    public function emailAlreadyUsed(): JsonResponse
     {
      return new JsonResponse(['error' => 'true','message' => 'Cet email est déjà utilisé par un autre compte'], 409);
     }
     
-    public function UserDontExist(): JsonResponse
+    public function userDontExist(): JsonResponse
     {
         return new JsonResponse(['error' => 'true','message' => 'L\'utilisateur n\'existe pas.'], 400);
     }
+
+    
     
     
     
