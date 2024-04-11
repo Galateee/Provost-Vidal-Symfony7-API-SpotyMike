@@ -66,6 +66,10 @@ class ExceptionManager
         return new JsonResponse(['error' => 'true','message' => 'L\'utilisateur n\'existe pas.'], 400);
     }
 
+    public function invalidDataProvided(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Données fournies non valides.'], 400);
+    }
     
     
     
