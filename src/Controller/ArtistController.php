@@ -24,6 +24,7 @@ class ArtistController extends AbstractController
         $this->repository = $entityManager->getRepository(Artist::class);
     }
 
+    /*
     #[Route('/artist', name: 'artist_post', methods: 'POST')]
     public function create(Request $request): JsonResponse
     {
@@ -46,6 +47,7 @@ class ArtistController extends AbstractController
             'path' => 'src/Controller/ArtistController.php',
         ]);
     }
+    */
 
     #[Route('/artist', name: 'artist_put', methods: 'PUT')]
     public function update(): JsonResponse

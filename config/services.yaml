@@ -20,9 +20,9 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\Controller\MiddlewareController:
-        argument:
-            $jwtProvider: '@lexik_jwt_authentication.jws_provider.default'
+    #App\Controller\TokenVerifierService:
+    #    argument:
+    #        $jwtProvider: '@lexik_jwt_authentication.jws_provider.default'
 
 
     # add more service definitions when explicit configuration is needed
