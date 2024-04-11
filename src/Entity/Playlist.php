@@ -18,7 +18,7 @@ class Playlist
 
     // #[ORM\Id]
     #[ORM\Column(length: 90)]
-    private ?string $idPlaylist = null;
+    private ?User $idPlaylist = null;
 
     #[ORM\Column(length: 50)]
     private ?string $title = null;
@@ -48,12 +48,12 @@ class Playlist
         return $this->id;
     }
 
-    public function getIdPlaylist(): ?string
+    public function getIdPlaylist(): ?User
     {
         return $this->idPlaylist;
     }
 
-    public function setIdPlaylist(string $idPlaylist): static
+    public function setIdPlaylist(User $idPlaylist): static
     {
         $this->idPlaylist = $idPlaylist;
 

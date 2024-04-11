@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use App\Repository\ArtistHasLabelRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,7 +20,7 @@ class ArtistHasLabel
     private ?\DateTimeInterface $createYear = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $deleateYear = null;
+    private ?\DateTimeInterface $deleteYear = null;
 
     #[ORM\Column(length: 255)]
     private ?string $id_Artist = null;
@@ -42,6 +44,7 @@ class ArtistHasLabel
     }
 
 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,14 +62,14 @@ class ArtistHasLabel
         return $this;
     }
 
-    public function getDeleateYear(): ?\DateTimeInterface
+    public function getDeleteYear(): ?\DateTimeInterface
     {
-        return $this->deleateYear;
+        return $this->deleteYear;
     }
 
-    public function setDeleateYear(\DateTimeInterface $deleateYear): static
+    public function setDeleteYear(\DateTimeInterface $deleteYear): static
     {
-        $this->deleateYear = $deleateYear;
+        $this->deleteYear = $deleteYear;
 
         return $this;
     }

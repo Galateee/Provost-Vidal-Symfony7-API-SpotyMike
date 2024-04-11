@@ -16,7 +16,7 @@ class Album
     private ?int $id = null;
 
     #[ORM\Column(length: 90)]
-    private ?string $idAlbum = null;
+    private ?User $idAlbum = null;
 
     #[ORM\Column(length: 90)]
     private ?string $name = null;
@@ -28,7 +28,7 @@ class Album
     private ?string $cover = null;
 
     #[ORM\Column]
-    private ?int $year = 2024;
+    private ?\DateTimeImmutable $year = null;
 
     #[ORM\ManyToOne(inversedBy: 'albums')]
     private ?Artist $artist_User_idUser = null;
@@ -46,12 +46,12 @@ class Album
         return $this->id;
     }
 
-    public function getIdAlbum(): ?string
+    public function getIdAlbum(): ?User
     {
         return $this->idAlbum;
     }
 
-    public function setIdAlbum(string $idAlbum): static
+    public function setIdAlbum(User $idAlbum): static
     {
         $this->idAlbum = $idAlbum;
 
@@ -94,12 +94,13 @@ class Album
         return $this;
     }
 
-    public function getYear(): ?int
+
+    public function getYear(): ?\DateTimeImmutable
     {
         return $this->year;
     }
 
-    public function setYear(int $year): static
+    public function setYear(\DateTimeImmutable $year): static
     {
         $this->year = $year;
 

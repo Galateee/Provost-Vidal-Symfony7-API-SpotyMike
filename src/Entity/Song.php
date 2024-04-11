@@ -16,7 +16,7 @@ class Song
     private ?int $id = null;
 
     #[ORM\Column(length: 90)]
-    private ?string $idSong = null;
+    private ?User $idSong = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -52,12 +52,12 @@ class Song
         return $this->id;
     }
 
-    public function getIdSong(): ?string
+    public function getIdSong(): ?User
     {
         return $this->idSong;
     }
 
-    public function setIdSong(string $idSong): static
+    public function setIdSong(User $idSong): static
     {
         $this->idSong = $idSong;
 
