@@ -70,6 +70,11 @@ class ExceptionManager
     {
         return new JsonResponse(['error' => 'true','message' => 'Données fournies non valides.'], 400);
     }
+    public function telAlreadyUsed(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Conflit de données. Le numéro de téléphone est déjà utilisé par  un autre utilisateur.'], 409);
+    }
+    
     
     
     

@@ -82,7 +82,7 @@ class UserController extends AbstractController
             return $this->exceptionManager->invalidDataProvided();
         }
 
-        // Validation du format de téléphone (format français)
+        // Format de téléphone invalide
         if (!empty($data['tel'])) {
             $tel = $data['tel'];
             if (!preg_match('/^0[1-9]([0-9]{2}){4}$/', $tel)) {
@@ -90,7 +90,7 @@ class UserController extends AbstractController
             }
         }
 
-        // Validation du sexe
+        // Valeur de sexe invalide
         if (!empty($data['sexe'])) {
             $allowedGenders = ['0', '1', '']; // 0 pour femme, 1 pour homme, '' pour non spécifié
             if (!in_array($data['sexe'], $allowedGenders)) {
@@ -98,6 +98,19 @@ class UserController extends AbstractController
             }
         }
 
+        // Données fournies non valides
+        if(!preg_match('/^[a-zA-ZÀ-ÿ\-]+$/', $data['firstname']) || !preg_match('/^[a-zA-ZÀ-ÿ\-]+$/', $data['lastname'])){
+            return $this->exceptionManager->invalidDataProvided();
+        }
+
+        // Non authentifié A FAIRE
+
+        // Conflit dans les données
+        $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['tel' => $data['tel']]);
+          if ($existingUser !== null) {
+               return $this->exceptionManager->telAlreadyUsed();
+          }
+        
         return new JsonResponse(['success' => 'Authentification réussie.'], 200);
     }
 }
