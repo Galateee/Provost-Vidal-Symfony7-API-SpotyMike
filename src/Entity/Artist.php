@@ -20,11 +20,24 @@ class Artist
     #[ORM\JoinColumn(nullable: false)]
     private ?User $User_idUser = null;
 
-    #[ORM\Column(length: 90)]
-    private ?string $fullname = null;
+    #[ORM\Column(length: 55)]
+    private ?string $fullName = null;
+
+    #[ORM\Column(length: 55)]
+    private ?string $sexe = null;
+
+    #[ORM\Column(length: 55)]
+    private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 90)]
     private ?string $label = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createAt = null;
+
+    #[ORM\Column]
+    private ?\DateTimeInterface $updateAt = null;
+
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -35,10 +48,19 @@ class Artist
     #[ORM\OneToMany(targetEntity: Album::class, mappedBy: 'artist_User_idUser')]
     private Collection $albums;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'user_follow_artist')]
+    private Collection $Artist_isFollow;
+
+    #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'Label_forArtist')]
+    private Collection $Artist_Has_Label;
+
     public function __construct()
     {
         $this->songs = new ArrayCollection();
         $this->albums = new ArrayCollection();
+        $this->label_id = new ArrayCollection();
+        $this->Artist_isFollow = new ArrayCollection();
+        $this->Artist_Has_Label = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -58,14 +80,38 @@ class Artist
         return $this;
     }
 
-    public function getFullname(): ?string
+    public function getFullName(): ?string
     {
-        return $this->fullname;
+        return $this->fullName;
     }
 
-    public function setFullname(string $fullname): static
+    public function setFullName(string $fullName): static
     {
-        $this->fullname = $fullname;
+        $this->fullName = $fullName;
+
+        return $this;
+    }
+
+    public function getSexe(): ?string
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(string $sexe): static
+    {
+        $this->sexe = $sexe;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeImmutable
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(\DateTimeImmutable $birthDate): static
+    {
+        $this->birthDate = $birthDate;
 
         return $this;
     }
@@ -90,6 +136,30 @@ class Artist
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getCreateAt(): ?\DateTimeImmutable
+    {
+        return $this->createAt;
+    }
+
+    public function setCreateAt(\DateTimeImmutable $createAt): static
+    {
+        $this->createAt = $createAt;
+
+        return $this;
+    }
+
+    public function getUpdateAt(): ?\DateTimeInterface
+    {
+        return $this->updateAt;
+    }
+
+    public function setUpdateAt(\DateTimeInterface $updateAt): static
+    {
+        $this->updateAt = $updateAt;
 
         return $this;
     }
@@ -156,10 +226,89 @@ class Artist
         return [
             "id" => $this->getId(),
             "idUser" => ($children) ? $this->getUserIdUser() : null,
-            "fullname" => $this->getFullname(),
+            "fullName" => $this->getFullName(),
+            "sexe" => $this->getSexe(),
+            "birthDate" => $this->getBirthDate(),
             "label" => $this->getLabel(),
             "description" => $this->getDescription(),
+            "createAt" => $this->getCreateAt(),
+            "updateAt" => $this->getUpdateAt(),
             "songs" => $this->getSongs()
         ];
+    }
+
+    /**
+     * @return Collection<int, Label>
+     */
+    public function getLabelId(): Collection
+    {
+        return $this->label_id;
+    }
+
+    public function addLabelId(Label $labelId): static
+    {
+        if (!$this->label_id->contains($labelId)) {
+            $this->label_id->add($labelId);
+        }
+
+        return $this;
+    }
+
+    public function removeLabelId(Label $labelId): static
+    {
+        $this->label_id->removeElement($labelId);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getArtistIsFollow(): Collection
+    {
+        return $this->Artist_isFollow;
+    }
+
+    public function addArtistIsFollow(User $artistIsFollow): static
+    {
+        if (!$this->Artist_isFollow->contains($artistIsFollow)) {
+            $this->Artist_isFollow->add($artistIsFollow);
+            $artistIsFollow->addUserFollowArtist($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArtistIsFollow(User $artistIsFollow): static
+    {
+        if ($this->Artist_isFollow->removeElement($artistIsFollow)) {
+            $artistIsFollow->removeUserFollowArtist($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Label>
+     */
+    public function getArtistHasLabel(): Collection
+    {
+        return $this->Artist_Has_Label;
+    }
+
+    public function addArtistHasLabel(Label $artistHasLabel): static
+    {
+        if (!$this->Artist_Has_Label->contains($artistHasLabel)) {
+            $this->Artist_Has_Label->add($artistHasLabel);
+        }
+
+        return $this;
+    }
+
+    public function removeArtistHasLabel(Label $artistHasLabel): static
+    {
+        $this->Artist_Has_Label->removeElement($artistHasLabel);
+
+        return $this;
     }
 }

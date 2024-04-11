@@ -124,6 +124,19 @@ class Song
         return $this;
     }
 
+    public function serializer($children = false)
+    {
+        return [
+            "id" => $this->getId(),
+            "idSong" => ($children) ? $this->getIdSong() : null,
+            "title" => $this->getTitle(),
+            "url" => $this->getUrl(),
+            "cover" => $this->getCover(),
+            "visibility" => $this->isVisibility(),
+            "createAt" => $this->getCreateAt()
+        ];
+    }
+
     /**
      * @return Collection<int, Artist>
      */

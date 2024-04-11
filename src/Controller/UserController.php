@@ -29,6 +29,34 @@ class UserController extends AbstractController
         $this->repository = $entityManager->getRepository(User::class);
     }
 
+    #[Route('/user', name: 'user_post', methods: 'POST')]
+    public function create(Request $request, UserPasswordHasherInterface $passwordHash): JsonResponse
+    {
+
+        $user = new User();
+        $user->setFirstName("Mike");
+        $user->setLastName("Mike");
+        $user->setSexe("Homme");
+        $user->setBirthDate(new DateTimeImmutable ());
+        $user->setEmail("Mike");
+        $user->setIdUser("Mike");
+        $user->setCreateAt(new DateTimeImmutable());
+        $user->setUpdateAt(new DateTimeImmutable());
+        $password = "Mike";
+
+        $hash = $passwordHash->hashPassword($user, $password);
+        $user->setPassword($hash);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $this->json([
+            'isNotGoodPassword' => ($passwordHash->isPasswordValid($user, 'Zoubida') ),
+            'isGoodPassword' => ($passwordHash->isPasswordValid($user, $password) ),
+            'user' => $user->serializer(),
+            'path' => 'src/Controller/UserController.php',
+        ]);
+    }
+
     #[Route('/user', name: 'user_put', methods: 'PUT')]
     public function update(): JsonResponse
     {
