@@ -22,6 +22,7 @@ class PlaylistHasSong
     #[ORM\OneToMany(targetEntity: Song::class, mappedBy: 'playlistHasSong')]
     private Collection $Song_idSong;
 
+
     #[ORM\Column(nullable: true)]
     private ?bool $download = null;
 
@@ -41,6 +42,7 @@ class PlaylistHasSong
     {
         return $this->id;
     }
+
 
     /**
      * @return Collection<int, Playlist>
@@ -136,5 +138,15 @@ class PlaylistHasSong
         $this->createAt = $createAt;
 
         return $this;
+    }
+
+    public function serializer($children = false)
+    {
+        return [
+            "id" => $this->getId(),
+            "download" => $this->isDownload(),
+            "position" => $this->getPosition(),
+            "createAt" => $this->getCreateAt()
+        ];
     }
 }
