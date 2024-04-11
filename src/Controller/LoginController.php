@@ -57,23 +57,22 @@ class LoginController extends AbstractController
 
         // REMARQUE :
         // Si le password n'est pas le bon par rapport à l'email -> succes quand même
-        // l'exception "compte non activé ou suspendu" pas encore fait
         // 
         // BONUS : ajout d'une exception "vérification si l'utilisateur existe"            
 
         $data = $request->request->all();
 
-        // Vérification de la présence des données obligatoires
+        // Données manquante
         if (!isset($data['email']) || !isset($data['password'])) {
             return $this->exceptionManager->missingData();
         }
 
-        // Validation du format de l'email
+        // Format d'email invalide
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             return $this->exceptionManager->invalidEmail();
         }
 
-        // Vérification du mot de passe selon plusieurs critères
+        // Mot de passe ne respcte pas les critères
         $password = $data['password'];
         if (
             strlen($password) < 8 ||                               // au moins 8 caractères

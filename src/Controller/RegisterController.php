@@ -43,7 +43,7 @@ class RegisterController extends AbstractController
 
           $data = $request->request->all();
 
-          // Vérification de la présence des données obligatoires
+          // Donnée manquante
           if (
                !isset($data['firstname'])  ||
                !isset($data['lastname'])   ||
@@ -54,12 +54,12 @@ class RegisterController extends AbstractController
                return $this->exceptionManager->missingData();
           }
 
-          // Validation du format de l'email
+          // Format d'email invalide
           if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                return $this->exceptionManager->invalidEmail();
           }
 
-          // Vérification du mot de passe selon plusieurs critères
+          // Format du mot de passe invalide
           $password = $data['password'];
           if (
                strlen($password) < 8 ||                               // au moins 8 caractères
@@ -71,7 +71,7 @@ class RegisterController extends AbstractController
                return $this->exceptionManager->invalidPasswordCriteria();
           }
 
-          // Validation du format de la date de naissance (JJ/MM/AAAA)
+          // Format de la date de naissance invalide
           $dateOfBirth = $data['dateBirth'];
           if (!preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $dateOfBirth)) {
                return $this->exceptionManager->invalidDateOfBirthFormat();
@@ -90,24 +90,24 @@ class RegisterController extends AbstractController
           $today = new DateTime();
           $age = $today->diff($dob)->y;
 
-          // Vérification de l'âge minimum (12 ans)
+          // Age minimum non respecté (moins de 12 ans)
           if ($age < 12) {
                return $this->exceptionManager->minimumAgeNotMet();
           }
 
-          // Validation du format de téléphone (format français)
+          // Format de téléphone invalide
           $tel = $data['tel'];
           if ($tel !== '' && !preg_match('/^0[1-9]([0-9]{2}){4}$/', $tel)) {
                return $this->exceptionManager->invalidPhoneNumberFormat();
           }
 
-          // Validation du sexe
+          // Valeur de sexe invalide
           $allowedGenders = ['0', '1', '']; // 0 pour femme, 1 pour homme, '' pour non spécifié
           if (!in_array($data['sexe'], $allowedGenders)) {
                return $this->exceptionManager->invalidGenderValue();
           }
 
-          // Vérification si l'email est déjà utilisé
+          // Email déjà utilisé
           $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
           if ($existingUser !== null) {
                return $this->exceptionManager->emailAlreadyUsed();
