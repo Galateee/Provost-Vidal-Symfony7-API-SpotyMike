@@ -8,15 +8,8 @@ use App\Entity\User;
 use App\Entity\Song;
 use App\Entity\Playlist;
 use App\Entity\Label;
-
-use App\Entity\Album as EntityAlbum;
-use App\Entity\Artist as EntityArtist;
-use App\Entity\ArtistHasLabel as EntityArtistHasLabel;
-use App\Entity\Label as EntityLabel;
-use App\Entity\Playlist as EntityPlaylist;
-use App\Entity\PlaylistHasSong as EntityPlaylistHasSong;
-use App\Entity\Song as EntitySong;
-use App\Entity\User as EntityUser;
+use App\Entity\ArtistHasLabel;
+use App\Entity\PlaylistHasSong;
 
 use DateTimeImmutable;
 use Doctrine\Persistence\ObjectManager;
@@ -38,7 +31,7 @@ class AppFixtures extends Fixture
         for ($i = 1; $i < 8; $i++) {
             
             //User
-            $user = new EntityUser();
+            $user = new User();
             $user->setFirstName("User_".$i);
             $user->setLastName("User_".$i);
             $user->setSexe("User_".rand(0,999));
@@ -52,7 +45,7 @@ class AppFixtures extends Fixture
             $manager->flush();
                 
             //Artist
-            $artist = new EntityArtist();
+            $artist = new Artist();
             $artist->setFullName("Artist_". $i);
             $artist->setCreateAt(new DateTimeImmutable());
             $artist->setUpdateAt(new DateTimeImmutable());
@@ -61,7 +54,7 @@ class AppFixtures extends Fixture
             $manager->flush();
 
             //Label
-            $label = new EntityLabel();
+            $label = new Label();
             $label->setName("Label_". $i);
             $label->setYearCreation(new DateTimeImmutable());
             $label->setIdLabel($user);
@@ -69,7 +62,7 @@ class AppFixtures extends Fixture
             $manager->flush();
 
             //Album
-            $album = new EntityAlbum();
+            $album = new Album();
             $album->setName("Album_". $i);
             $album->setCategory("Album_". $i);           
             $album->setCover("Album_". $i);
@@ -80,7 +73,7 @@ class AppFixtures extends Fixture
             $manager->flush();
 
             //Song
-            $song = new EntitySong();
+            $song = new Song();
             $song->setTitle("Song_". $i);
             $song->setUrl("Song_". $i);
             $song->setCover("Song_". $i);
@@ -92,7 +85,7 @@ class AppFixtures extends Fixture
             $manager->flush();   
 
             //Playlist
-            $playlist = new EntityPlaylist();
+            $playlist = new Playlist();
             $playlist->setTitle("Playlist_". $i);
             $playlist->setPublic("Playlist_". $i);
             $playlist->setCreateAt(new DateTimeImmutable());
@@ -102,16 +95,15 @@ class AppFixtures extends Fixture
             $manager->flush();
 
             //ArtistHasLabel
-            $artisthaslabel = new EntityArtistHasLabel();
+            $artisthaslabel = new ArtistHasLabel();
             $artisthaslabel->setCreateYear(new DateTimeImmutable());
             $artisthaslabel->setDeleteYear(new DateTimeImmutable());
-            $artisthaslabel->setId($user);
-            $artisthaslabel->persist($artisthaslabel);
+            $manager->persist($artisthaslabel);
             $manager->flush(); 
 
             //ArtistHasSong
-            $playlisthassong = new EntityPlaylistHasSong();
-            $playlisthassong->setDownload("PlaylistHasSong_". $i);
+            $playlisthassong = new PlaylistHasSong();
+            $playlisthassong->setDownload((rand(0,1)));
             $playlisthassong->setPosition("PlaylistHasSong_". $i);
             $playlisthassong->setCreateAt(new DateTimeImmutable());
             $manager->persist($playlisthassong);

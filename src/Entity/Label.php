@@ -17,7 +17,7 @@ class Label
     private ?int $id = null;
 
     #[ORM\Column(length: 90)]
-    private ?string $idLabel = null;
+    private ?User $idLabel = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -30,7 +30,6 @@ class Label
 
     public function __construct()
     {
-        $this->artistsLabel_id = new ArrayCollection();
         $this->Label_forArtist = new ArrayCollection();
     }
 
@@ -39,12 +38,12 @@ class Label
         return $this->id;
     }
 
-    public function getIdLabel(): ?string
+    public function getIdLabel(): ?User
     {
         return $this->idLabel;
     }
 
-    public function setIdLabel(string $idLabel): static
+    public function setIdLabel(User $idLabel): static
     {
         $this->idLabel = $idLabel;
 
@@ -75,40 +74,13 @@ class Label
         return $this;
     }
 
-    /**
-     * @return Collection<int, Artist>
-     */
-    public function getArtistsLabelId(): Collection
-    {
-        return $this->artistsLabel_id;
-    }
-
-    public function addArtistsLabelId(Artist $artistsLabelId): static
-    {
-        if (!$this->artistsLabel_id->contains($artistsLabelId)) {
-            $this->artistsLabel_id->add($artistsLabelId);
-            $artistsLabelId->addLabelId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArtistsLabelId(Artist $artistsLabelId): static
-    {
-        if ($this->artistsLabel_id->removeElement($artistsLabelId)) {
-            $artistsLabelId->removeLabelId($this);
-        }
-
-        return $this;
-    }
-
     public function serializer($children = false)
     {
         return [
             "id" => $this->getId(),
             "idLabel" => ($children) ? $this->getIdLabel() : null,
             "name" => $this->getName(),
-            "year" => $this->getYear()
+            "yearCreation" => $this->getYearCreation()
         ];
     }
 

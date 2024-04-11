@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Artist;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -65,6 +66,8 @@ class ArtistController extends AbstractController
                 "artist" => $artist->serializer(),
             ]);
         }
+        return $this->json([
+        ]);
     }
 
     #[Route('/artist', name: 'artist_delete', methods: 'DELETE')]

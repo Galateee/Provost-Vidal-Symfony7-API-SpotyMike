@@ -66,10 +66,21 @@ class ExceptionManager
         return new JsonResponse(['error' => 'true','message' => 'L\'utilisateur n\'existe pas.'], 400);
     }
 
+    public function noDataProvided(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Aucune donnée'], 400);
+    }
+
     public function invalidDataProvided(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Données fournies non valides.'], 400);
+        return new JsonResponse(['error' => 'true','message' => 'Les données fournies sont invalides ou imcomplètes'], 400);
     }
+
+    public function telAlreadyUsed(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Conflit de données. Le numéro de téléphone est déjà utilisé par  un autre utilisateur.'], 409);
+    }
+    
     
     
     
