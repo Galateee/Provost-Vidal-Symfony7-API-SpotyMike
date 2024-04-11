@@ -8,9 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\MiddlewareController;
 use App\Service\ExceptionManager;
 
-class LoginController extends AbstractController
+class LoginController extends MiddlewareController
 {
 
     private $exceptionManager;
