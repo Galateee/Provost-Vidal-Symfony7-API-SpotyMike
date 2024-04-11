@@ -63,7 +63,7 @@ class AppFixtures extends Fixture
             //Label
             $label = new EntityLabel();
             $label->setName("Label_". $i);
-            $label->setYear(new DateTimeImmutable());
+            $label->setYearCreation(new DateTimeImmutable());
             $label->setIdLabel($user);
             $manager->persist($label);
             $manager->flush();

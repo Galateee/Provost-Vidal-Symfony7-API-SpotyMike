@@ -3,20 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Bundle\FrameworkBundle\Controller\MiddlewareController;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ExceptionManager;
-use Exception;
 
-class UserController extends MiddlewareController
+class UserController extends AbstractController
 {
     private $exceptionManager;
     private $repository;
@@ -27,24 +24,6 @@ class UserController extends MiddlewareController
         $this->exceptionManager = $exceptionManager;
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(User::class);
-    }
-
-    #[Route('/user', name: 'user_put', methods: 'PUT')]
-    public function update(): JsonResponse
-    {
-        $phone = "0668000000";
-        if (preg_match("/^[0-9]{10}$/", $phone)) {
-
-            $user = $this->repository->findOneBy(["id" => 1]);
-            $old = $user->getTel();
-            $user->setTel($phone);
-            $this->entityManager->flush();
-            return $this->json([
-                "New_tel" => $user->getTel(),
-                "Old_tel" => $old,
-                "user" => $user->serializer(),
-            ]);
-        }
     }
 
     #[Route('/user', name: 'user_delete', methods: 'DELETE')]
@@ -93,7 +72,7 @@ class UserController extends MiddlewareController
     }
 
     #[Route('/user', name: 'user_post', methods: ['POST'])]
-    public function register(Request $request, ExceptionManager $exceptionManager): JsonResponse
+    public function register(Request $request): JsonResponse
     {
 
         $data = $request->request->all();
@@ -118,9 +97,6 @@ class UserController extends MiddlewareController
                 return $this->exceptionManager->invalidGenderValue();
             }
         }
-
-
-
 
         return new JsonResponse(['success' => 'Authentification réussie.'], 200);
     }
