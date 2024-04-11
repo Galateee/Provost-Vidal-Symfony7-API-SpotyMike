@@ -80,6 +80,16 @@ class ExceptionManager
     {
         return new JsonResponse(['error' => 'true','message' => 'Conflit de données. Le numéro de téléphone est déjà utilisé par  un autre utilisateur.'], 409);
     }
+
+    public function EmailMissing(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Email manquant. Veuillez fournir votre email pour la récupération du mot de passe.'], 400);
+    }
+    
+    public function emailNotFound(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Aucun compte n\'est associé à cet email. Veuillez vérifier et réessayer.'], 404);
+    }
     
     
     
