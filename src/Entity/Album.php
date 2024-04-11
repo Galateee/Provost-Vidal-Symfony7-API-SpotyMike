@@ -126,7 +126,8 @@ class Album
             "name" => $this->getName(),
             "category" => $this->getCategory(),
             "cover" => $this->getCover(),
-            "year" => $this->getYear()
+            "year" => $this->getYear(),
+            "artistUserIdUser" => $this->getArtistUserIdUser()
         ];
     }
 

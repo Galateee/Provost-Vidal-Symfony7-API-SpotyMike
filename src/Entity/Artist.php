@@ -32,6 +32,13 @@ class Artist
     #[ORM\Column(length: 90)]
     private ?string $label = null;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createAt = null;
+
+    #[ORM\Column]
+    private ?\DateTimeInterface $updateAt = null;
+
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
@@ -133,6 +140,30 @@ class Artist
         return $this;
     }
 
+    public function getCreateAt(): ?\DateTimeImmutable
+    {
+        return $this->createAt;
+    }
+
+    public function setCreateAt(\DateTimeImmutable $createAt): static
+    {
+        $this->createAt = $createAt;
+
+        return $this;
+    }
+
+    public function getUpdateAt(): ?\DateTimeInterface
+    {
+        return $this->updateAt;
+    }
+
+    public function setUpdateAt(\DateTimeInterface $updateAt): static
+    {
+        $this->updateAt = $updateAt;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Song>
      */
@@ -200,6 +231,8 @@ class Artist
             "birthDate" => $this->getBirthDate(),
             "label" => $this->getLabel(),
             "description" => $this->getDescription(),
+            "createAt" => $this->getCreateAt(),
+            "updateAt" => $this->getUpdateAt(),
             "songs" => $this->getSongs()
         ];
     }
