@@ -27,6 +27,9 @@ class Artist
     private ?string $sexe = null;
 
     #[ORM\Column(length: 55)]
+    private ?string $tel = null;
+
+    #[ORM\Column(length: 55)]
     private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 90)]
@@ -58,7 +61,6 @@ class Artist
     {
         $this->songs = new ArrayCollection();
         $this->albums = new ArrayCollection();
-        $this->label_id = new ArrayCollection();
         $this->Artist_isFollow = new ArrayCollection();
         $this->Artist_Has_Label = new ArrayCollection();
     }
@@ -100,6 +102,19 @@ class Artist
     public function setSexe(string $sexe): static
     {
         $this->sexe = $sexe;
+
+        return $this;
+    }
+
+    
+    public function getTel(): ?string
+    {
+        return $this->tel;
+    }
+
+    public function setTel(string $tel): static
+    {
+        $this->tel = $tel;
 
         return $this;
     }
@@ -228,6 +243,7 @@ class Artist
             "idUser" => ($children) ? $this->getUserIdUser() : null,
             "fullName" => $this->getFullName(),
             "sexe" => $this->getSexe(),
+            "tel" => $this->getTel(),
             "birthDate" => $this->getBirthDate(),
             "label" => $this->getLabel(),
             "description" => $this->getDescription(),
@@ -235,30 +251,6 @@ class Artist
             "updateAt" => $this->getUpdateAt(),
             "songs" => $this->getSongs()
         ];
-    }
-
-    /**
-     * @return Collection<int, Label>
-     */
-    public function getLabelId(): Collection
-    {
-        return $this->label_id;
-    }
-
-    public function addLabelId(Label $labelId): static
-    {
-        if (!$this->label_id->contains($labelId)) {
-            $this->label_id->add($labelId);
-        }
-
-        return $this;
-    }
-
-    public function removeLabelId(Label $labelId): static
-    {
-        $this->label_id->removeElement($labelId);
-
-        return $this;
     }
 
     /**
