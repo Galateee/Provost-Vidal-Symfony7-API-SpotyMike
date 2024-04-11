@@ -78,8 +78,13 @@ class UserController extends AbstractController
         $data = $request->request->all();
 
         // Vérifier si aucune donnée n'est envoyée
-        if (empty($data)) {
-            return $this->exceptionManager->invalidDataProvided();
+        if (
+            empty($data['tel']) &&
+            empty($data['sexe']) &&
+            empty($data['firstname']) &&
+            empty($data['lastname'])
+        ) {
+            return $this->exceptionManager->noDataProvided();
         }
 
         // Format de téléphone invalide
@@ -98,19 +103,25 @@ class UserController extends AbstractController
             }
         }
 
-        // Données fournies non valides
-        if(!preg_match('/^[a-zA-ZÀ-ÿ\-]+$/', $data['firstname']) || !preg_match('/^[a-zA-ZÀ-ÿ\-]+$/', $data['lastname'])){
+        // Vérification des données fournies non valides
+        if (!empty($data['firstname']) && !preg_match('/^[a-zA-ZÀ-ÿ\-]+$/', $data['firstname'])) {
             return $this->exceptionManager->invalidDataProvided();
         }
+        if (!empty($data['lastname']) && !preg_match('/^[a-zA-ZÀ-ÿ\-]+$/', $data['lastname'])) {
+            return $this->exceptionManager->invalidDataProvided();
+        }
+
 
         // Non authentifié A FAIRE
 
         // Conflit dans les données
-        $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['tel' => $data['tel']]);
-          if ($existingUser !== null) {
-               return $this->exceptionManager->telAlreadyUsed();
-          }
-        
-        return new JsonResponse(['success' => 'Authentification réussie.'], 200);
+        $existingUser = $this->repository->findOneBy(['tel' => $data['tel']]);
+        if ($existingUser !== null) {
+            return $this->exceptionManager->telAlreadyUsed();
+        }
+
+        // Erreur de validation A FAIRE
+
+        return new JsonResponse(['error' => 'false','message' => 'Votre inscription a bien été prise en compte'], 200);
     }
 }
