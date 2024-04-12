@@ -91,7 +91,15 @@ class ExceptionManager
         return new JsonResponse(['error' => 'true','message' => 'Aucun compte n\'est associé à cet email. Veuillez vérifier et réessayer.'], 404);
     }
     
+    public function invalidNewPassword(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Veuillez fournir un nouveau mot de passe'], 400);
+    }
     
+    public function invalidNewPasswordCriteria(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Le nouveau mot de passe ne respecte pas les critères requis. Il doit contenir au moins une majuscule, une minuscule, un chiffre, un caractère spécial et être composé d\'au moins 8 caractères.'], 400);
+    }
     
     
     
