@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -44,7 +45,19 @@ class PasswordLostController extends AbstractController
                return $this->exceptionManager->emailNotFound();
           }
 
-          // Trop de demandes A FAIRE
+          // Trop de demande
+          $existingUser -> setUpdateAt(new DateTime()); 
+          $nbTry = ($existingUser -> getNbTry()) ? $existingUser -> getNbTry() : 0; // 0 par défaut
+          $existingUser -> setNbTry  ( $nbTry++); 
+          $this->entityManager->persist($existingUser);
+          $this->entityManager->flush();
+          $timestamp1 = time(); 
+          $timestamp2 = $existingUser->getUpdateAt()->getTimestamp() +300; 
+          if ($timestamp1 > $timestamp2 || $nbTry >= 5 ){
+               return $this->exceptionManager->maxPasswordTry();
+          }
+          else {
+          }                           
 
           return new JsonResponse(['success' => 'true', 'message' => 'Un mail de réinitialisation de mot de pass a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour éinitialiser votre mot de passe'], 200);
      }
