@@ -115,6 +115,32 @@ class ExceptionManager
     {
         return new JsonResponse(['error' => 'true','message' => 'Ce nom d\'artiste est déjà pris. Veuillez en choisir un autre.'], 409);
     }
+
+    public function invalidPaginationValue(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Le paramètre de pagination est invalide. Veuillez fournir un numéro de page valide.'], 400);
+    }
+
+    public function NoArtistInPagination(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Aucun artiste trouvé pour la page demandée.'], 404);
+    }
+
+    public function missingArtistName(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Le nom d\'artiste est obligatoire pour cette requête.'], 400);
+    }
+
+    public function invalidArtistNameFormat(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Le format du nom d\'artiste fourni est invalide.'], 400);
+    }
+    
+    public function artistNotFound(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Aucun artiste trouvé correspondant au nom fourni.'], 404);
+    }
+    
     
     
     // TODO
