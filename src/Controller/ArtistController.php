@@ -12,51 +12,29 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use App\Service\ExceptionManager;
 
 class ArtistController extends AbstractController
 {
 
+    private $exceptionManager;
     private $repository;
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager){
+    public function __construct(ExceptionManager $exceptionManager, EntityManagerInterface $entityManager)
+    {
+        $this->exceptionManager = $exceptionManager;
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Artist::class);
     }
-
-    /*
-    #[Route('/artist', name: 'artist_post', methods: 'POST')]
-    public function create(Request $request): JsonResponse
-    {
-
-        $artist = new Artist();
-        $artist->setFirstName("The Weeknd");
-        $artist->setLastName(null);
-        $artist->setSexe("Male");
-        $artist->setBirthDate(new DateTimeImmutable());
-        $artist->setlabel("XO");
-        $artist->setIdUser("Artist_".rand(0,999));
-        $password = "TheWeeknd";
-
-        $this->entityManager->persist($artist);
-        $this->entityManager->flush();
-
-        return $this->json([
-            'artist' => $artist->serializer(),
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ArtistController.php',
-        ]);
-    }
-    */
 
     #[Route('/artist', name: 'artist_put', methods: 'PUT')]
     public function update(): JsonResponse
     {
         $phone = "0668000000";
-        if(preg_match("/^[0-9]{10}$/", $phone)) {
+        if (preg_match("/^[0-9]{10}$/", $phone)) {
 
-            $artist = $this->repository->findOneBy(["id"=>1]);
+            $artist = $this->repository->findOneBy(["id" => 1]);
             $old = $artist->getTel();
             $artist->setTel($phone);
             $this->entityManager->flush();
@@ -66,14 +44,13 @@ class ArtistController extends AbstractController
                 "artist" => $artist->serializer(),
             ]);
         }
-        return $this->json([
-        ]);
+        return $this->json([]);
     }
 
     #[Route('/artist', name: 'artist_delete', methods: 'DELETE')]
     public function delete(): JsonResponse
     {
-        $this->entityManager->remove($this->repository->findOneBy(["id"=>1]));
+        $this->entityManager->remove($this->repository->findOneBy(["id" => 1]));
         $this->entityManager->flush();
         return $this->json([
             'message' => 'Welcome to your new controller!',
@@ -84,7 +61,6 @@ class ArtistController extends AbstractController
     #[Route('/artist', name: 'artist_get', methods: 'GET')]
     public function read(): JsonResponse
     {
-
 
         $serializer = new Serializer([new ObjectNormalizer()]);
         // $jsonContent = $serializer->serialize($person, 'json');
@@ -113,5 +89,66 @@ class ArtistController extends AbstractController
                 'message' => $exception->getMessage()
             ], 404);
         }
+    }
+
+    #[Route('/artist', name: 'artist_post', methods: 'POST')]
+    public function create(Request $request): JsonResponse
+    {
+        /*
+        $artist = new Artist();
+        $artist->setFirstName("The Weeknd");
+        $artist->setLastName(null);
+        $artist->setSexe("Male");
+        $artist->setBirthDate(new DateTimeImmutable());
+        $artist->setlabel("XO");
+        $artist->setIdUser("Artist_".rand(0,999));
+        $password = "TheWeeknd";
+
+        $this->entityManager->persist($artist);
+        $this->entityManager->flush();
+
+        return $this->json([
+            'artist' => $artist->serializer(),
+            'message' => 'Welcome to your new controller!',
+            'path' => 'src/Controller/ArtistController.php',
+        ]);
+        */
+
+        $data = $request->request->all();
+
+        // Donnée obligatoires manquantes 
+        if (
+            !isset($data['label'])  ||
+            !isset($data['fullname'])
+        ) {
+            return $this->exceptionManager->missingData();
+        }
+
+        // Format de l'id du label invalide
+        if (!preg_match("/^[a-zA-Z0-9_]+$/", $data['label'])) {
+            return $this->exceptionManager->invalidLabelFormat();
+        }
+
+        // Non authentifié A FAIRE
+
+        // Utilisateur non éligible pour être artist (condition = avoir 16 ans minimum)
+        $birthdate = new DateTimeImmutable($data['birthdate']);
+        $minimumAge = 16;
+        $today = new DateTimeImmutable();
+        $age = $today->diff($birthdate)->y;
+        if ($age < $minimumAge) {
+            return $this->exceptionManager->minimumAgeForArtist();
+        }
+
+        // Compte artist existant pour l'utilisateur A FAIRE 
+
+        // Nom d'artist déja utilisé
+        $existingArtist = $this->repository->findOneBy(['fullname' => $data['fullname']]);
+        if ($existingArtist!== null) {
+            return $this->exceptionManager->artistAllreadyExist();
+        }
+
+        // pas oublié de gérer l'envoie de artist_id
+        return new JsonResponse(['succes' => 'true', 'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !', 'artist_id' => ''], 200);
     }
 }
