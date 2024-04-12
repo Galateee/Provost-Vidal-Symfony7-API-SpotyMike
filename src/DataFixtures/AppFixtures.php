@@ -87,7 +87,7 @@ class AppFixtures extends Fixture
             //Playlist
             $playlist = new Playlist();
             $playlist->setTitle("Playlist_". $i);
-            $playlist->setPublic("Playlist_". $i);
+            $playlist->setPublic(rand(0,1));
             $playlist->setCreateAt(new DateTimeImmutable());
             $playlist->setUpdateAt(new DateTimeImmutable());
             $playlist->setIdPlaylist($user);
