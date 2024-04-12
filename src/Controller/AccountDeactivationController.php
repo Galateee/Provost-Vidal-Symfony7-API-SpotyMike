@@ -29,6 +29,6 @@ class AccountDeactivationController extends AbstractController
           $data = $request->request->all();
 
 
-          return new JsonResponse(['success' => 'true', 'message' => ''], 200);
+          return new JsonResponse(['success' => 'true', 'message' => 'Votre compte a été désactivé avec succès. Nous sommes désolés de vous voir partir.'], 200);
      }
 }

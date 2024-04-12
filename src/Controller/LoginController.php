@@ -105,6 +105,7 @@ class LoginController extends AbstractController
         }
 
         // Si tout est bon, authentification réussie
-        return new JsonResponse(['success' => 'Authentification réussie.'], 200);
+        return new JsonResponse(['error' => 'false','message' => 'L\'utilisateur a été authentifié avec succès.'], 200);
+
     }
 }
