@@ -115,6 +115,17 @@ class ExceptionManager
     {
         return new JsonResponse(['error' => 'true','message' => 'Ce nom d\'artiste est déjà pris. Veuillez en choisir un autre.'], 409);
     }
+
+    public function invalidPaginationValue(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Le paramètre de pagination est invalide. Veuillez fournir un numéro de page valide.'], 400);
+    }
+
+    public function NoArtistInPagination(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Aucun artiste trouvé pour la page demandée.'], 404);
+    }
+    
     
     
     // TODO

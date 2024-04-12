@@ -58,18 +58,6 @@ class ArtistController extends AbstractController
         ]);
     }
 
-    #[Route('/artist', name: 'artist_get', methods: 'GET')]
-    public function read(): JsonResponse
-    {
-
-        $serializer = new Serializer([new ObjectNormalizer()]);
-        // $jsonContent = $serializer->serialize($person, 'json');
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ArtistController.php',
-        ]);
-    }
-
     #[Route('/artist/all', name: 'artist_get_all', methods: 'GET')]
     public function readAll(): JsonResponse
     {
@@ -144,11 +132,39 @@ class ArtistController extends AbstractController
 
         // Nom d'artist déja utilisé
         $existingArtist = $this->repository->findOneBy(['fullname' => $data['fullname']]);
-        if ($existingArtist!== null) {
+        if ($existingArtist !== null) {
             return $this->exceptionManager->artistAllreadyExist();
         }
 
         // pas oublié de gérer l'envoie de artist_id
-        return new JsonResponse(['succes' => 'true', 'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !', 'artist_id' => ''], 200);
+        return new JsonResponse(['succes' => 'true', 'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !', 'artist_id' => ''], 201);
+    }
+
+    #[Route('/artist', name: 'artist_get', methods: 'GET')]
+    public function read(Request $request): JsonResponse
+    {
+        $data = $request->request->all();
+
+        // Paramètre de pagination invalide 
+        if (!is_numeric($data['currentPage']) || $data['currentPage'] <= 0) {
+            return $this->exceptionManager->invalidPaginationValue();
+        }
+
+        // Non authentifié A FAIRE
+
+        // Aucun artiste trouvé
+        $currentPage = $data['currentPage'];
+        $artistsPerPage = 5;
+
+        $offset = ($currentPage - 1) * $artistsPerPage;
+
+        $artists = $this->repository->findBy([], null, $artistsPerPage, $offset);
+
+        if (empty($artists)) {
+            return $this->exceptionManager->NoArtistInPagination();
+        }
+        
+        // A FAIRE
+        return new JsonResponse(['succes' => 'true', 'message' => ''], 200);
     }
 }
