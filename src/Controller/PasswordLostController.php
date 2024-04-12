@@ -52,7 +52,7 @@ class PasswordLostController extends AbstractController
           $this->entityManager->persist($existingUser);
           $this->entityManager->flush();
           $timestamp1 = time(); 
-          $timestamp2 = strtotime( $existingUser -> getUpdateAt()+300); 
+          $timestamp2 = $existingUser->getUpdateAt()->getTimestamp() +300; 
           if ($timestamp1 > $timestamp2 || $nbTry >= 5 ){
                return $this->exceptionManager->maxPasswordTry();
           }
