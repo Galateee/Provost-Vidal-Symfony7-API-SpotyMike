@@ -100,7 +100,21 @@ class ExceptionManager
     {
         return new JsonResponse(['error' => 'true','message' => 'Le nouveau mot de passe ne respecte pas les critères requis. Il doit contenir au moins une majuscule, une minuscule, un chiffre, un caractère spécial et être composé d\'au moins 8 caractères.'], 400);
     }
+
+    public function invalidLabelFormat(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Le format du label est invalide.'], 400);
+    }
+
+    public function minimumAgeForArtist(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Vous devez avoir au moins 16 ans pour être artiste.'], 403);
+    }
     
+    public function artistAllreadyExist(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Ce nom d\'artiste est déjà pris. Veuillez en choisir un autre.'], 409);
+    }
     
     
     // TODO
