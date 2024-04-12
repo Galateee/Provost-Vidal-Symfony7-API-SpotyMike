@@ -163,8 +163,36 @@ class ArtistController extends AbstractController
         if (empty($artists)) {
             return $this->exceptionManager->NoArtistInPagination();
         }
-        
+
         // A FAIRE
         return new JsonResponse(['succes' => 'true', 'message' => ''], 200);
+    }
+
+    #[Route('/artist/{fullname}', name: 'artist_get_info', methods: ['GET'])]
+    public function getInfo(string $fullname): JsonResponse
+    {
+        // Nom d'artiste non fourni
+        if (empty($fullname)) {
+            return $this->exceptionManager->missingArtistName();
+        }
+
+        // Format du nom d'artiste invalide
+        if (!preg_match("/^[a-zA-Z\s]+$/", $fullname)) {
+            return $this->exceptionManager->invalidArtistNameFormat();
+        }
+
+        // Non authentifié A FAIRE
+
+        // Artiste non trouvé
+        $artist = $this->repository->findOneBy(['fullname' => $fullname]);
+        if (!$artist) {
+            return $this->exceptionManager->artistNotFound();
+        }
+
+        // Succès
+        return $this->json([
+            'artist' => $artist->serializer(),
+            'message' => 'Artist information retrieved successfully.',
+        ]);
     }
 }

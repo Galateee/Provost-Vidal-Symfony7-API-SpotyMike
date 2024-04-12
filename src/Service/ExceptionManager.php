@@ -125,6 +125,21 @@ class ExceptionManager
     {
         return new JsonResponse(['error' => 'true','message' => 'Aucun artiste trouvé pour la page demandée.'], 404);
     }
+
+    public function missingArtistName(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Le nom d\'artiste est obligatoire pour cette requête.'], 400);
+    }
+
+    public function invalidArtistNameFormat(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Le format du nom d\'artiste fourni est invalide.'], 400);
+    }
+    
+    public function artistNotFound(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Aucun artiste trouvé correspondant au nom fourni.'], 404);
+    }
     
     
     

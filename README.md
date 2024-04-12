@@ -7,7 +7,7 @@
 5: Route de réinitialisation de mot de passe GET /reset-password/{token} -> manque token manquant ou invalide et token expiré  
 6: Route de suppression du compte DELETE /account-deactivation -> manque succes, non authentifié et compte déjà désactivé  
 7: Route création artist POST /artist -> manque succes, non authentifié et compte artist existant pour l'utilisateur   
-8: Route de récupération de toutes les infos des artistes GET /artist -> pas fait  
-9: Route de récupération de toutes les infos d'un artiste GET /artist/xxx -> pas fait  
+8: Route de récupération de toutes les infos des artistes GET /artist -> manque succes et non authentifié  
+9: Route de récupération de toutes les infos d'un artiste GET /artist/xxx -> manque succes et non authentifié  
 10: Route de mise à jour de compte artist POST /artist -> pas fait  
 11: Route de désactivation du compte artist DELETE /artist -> pas fait  
