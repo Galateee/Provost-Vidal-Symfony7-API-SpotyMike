@@ -43,6 +43,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 90)]
     private ?string $password = null;
 
+    #[ORM\Column(length: 1)]
+    private ?int $nbTry = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createAt = null;
 
@@ -154,6 +157,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getNbTry(): ?int
+    {
+        return $this->nbTry;
+    }
+
+    public function setNbTry(int $nbTry): static
+    {
+        $this->nbTry = $nbTry;
+
+        return $this;
+    }
+
     public function getTel(): ?string
     {
         return $this->tel;
@@ -231,7 +246,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             "birthDate" => $this->getBirthDate(),
             "email" => $this->getEmail(),
             "tel" => $this->getTel(),
+            'nbTry' => $this->getNbTry(),
             "createAt" => $this->getCreateAt(),
+            "updateeAt" => $this->getUpdateAt(),
             "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [],
         ];
     }
