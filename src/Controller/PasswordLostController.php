@@ -9,7 +9,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
-use DateTime;
 
 class PasswordLostController extends AbstractController
 {
@@ -40,7 +39,7 @@ class PasswordLostController extends AbstractController
           }
 
           // Email non trouvé
-          $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+          $existingUser = $this->repository->findOneBy(['email' => $data['email']]);
           if ($existingUser === null) {
                return $this->exceptionManager->emailNotFound();
           }
