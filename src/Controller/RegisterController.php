@@ -49,7 +49,7 @@ class RegisterController extends AbstractController
                !isset($data['lastname'])   ||
                !isset($data['email'])      ||
                !isset($data['password'])   ||
-               !isset($data['dateBirth'])
+               !isset($data['birthDate'])
           ) {
                return $this->exceptionManager->missingData();
           }
@@ -72,7 +72,7 @@ class RegisterController extends AbstractController
           }
 
           // Format de la date de naissance invalide
-          $dateOfBirth = $data['dateBirth'];
+          $dateOfBirth = $data['birthDate'];
           if (!preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $dateOfBirth)) {
                return $this->exceptionManager->invalidDateOfBirthFormat();
           }
@@ -114,6 +114,23 @@ class RegisterController extends AbstractController
           }
 
           // Si tout est bon, authentification réussie
-          return new JsonResponse(['success' => 'Authentification réussie.'], 200);
+          $user = new User();
+          $user->setIdUser("User_". uniqid());
+          $user->setFirstName($data['firstname']);
+          $user->setLastName($data['lastname']);
+          $user->setEmail($data['email']);
+          $user->setPassword($password);
+          $user->setBirthDate($dateOfBirth);
+          $user->setTel($data['tel']);
+          $user->setSexe($data['sexe']);
+          $user->setCreateAt(new \DateTimeImmutable());
+          $user->setUpdateAt(new \DateTime());
+          $this->entityManager->persist($user);
+          $this->entityManager->flush();
+          return $this->json([
+               'error' => 'false',
+               'path' => 'L\'utilisateur a bien été créé avec succès.',
+               'user' => $user->serializer(),
+          ], 201);
      }
 }
