@@ -32,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $sexe = null;
 
     #[ORM\Column(length: 55)]
-    private ?\DateTimeImmutable $birthDate = null;
+    private ?\DateTimeImmutable $dateBirth = null;
 
     #[ORM\Column(length: 80, unique:true)]
     private ?string $email = null;
@@ -114,24 +114,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->sexe;
     }
 
-    public function setSexe(string $sexe): static
+    public function setSexe(?string $sexe): static
     {
-        $this->sexe = $sexe;
+        $this->sexe = $sexe !== null ? $sexe : "";
+    
+        return $this;
+    }
+
+    public function getDateBirth(): ?\DateTimeImmutable
+    {
+        return $this->dateBirth;
+    }
+
+    public function setDateBirth(string $dateBirth): self
+    {
+        $this->dateBirth = new \DateTimeImmutable($dateBirth);
 
         return $this;
     }
 
-    public function getBirthDate(): ?\DateTimeImmutable
-    {
-        return $this->birthDate;
-    }
-
-    public function setBirthDate(\DateTimeImmutable $birthDate): static
-    {
-        $this->birthDate = $birthDate;
-
-        return $this;
-    }
 
     public function getEmail(): ?string
     {
@@ -162,10 +163,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->nbTry;
     }
 
-    public function setNbTry(int $nbTry): static
+    public function setNbTry(?int $nbTry): static
     {
-        $this->nbTry = $nbTry;
-
+        $this->nbTry = $nbTry !== null ? $nbTry : "";
+    
         return $this;
     }
 
@@ -176,8 +177,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setTel(?string $tel): static
     {
-        $this->tel = $tel;
-
+        $this->tel = $tel !== null ? $tel : "";
+    
         return $this;
     }
 
@@ -243,7 +244,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             "firstName" => $this->getFirstName(),
             "lastName" => $this->getLastName(),
             "sexe" => $this->getSexe(),
-            "birthDate" => $this->getBirthDate(),
+            "dateBirth" => $this->getDateBirth(),
             "email" => $this->getEmail(),
             "tel" => $this->getTel(),
             'nbTry' => $this->getNbTry(),
