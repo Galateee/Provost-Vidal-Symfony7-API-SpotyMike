@@ -37,6 +37,11 @@ class ExceptionManager
      return new JsonResponse(['error' => true,'message' => 'Trop de tentatives de connexion (5 max). Veuillez réessayer ultérieurement - xxx min d\'attente'], 429);
     }
 
+    public function invalidDataProvidedRegister(): JsonResponse
+    {
+        return new JsonResponse(['error' => true,'message' => 'Les données fournies sont invalides ou imcomplètes'], 400);
+    }
+
 
 
     //route POST/register

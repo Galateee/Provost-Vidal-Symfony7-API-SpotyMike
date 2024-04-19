@@ -53,20 +53,20 @@ class RegisterController extends AbstractController
                !isset($data['password'])   ||
                !isset($data['dateBirth'])
           ) {
-               return $this->exceptionManager->missingData();
+               return $this->exceptionManager->missingDataRegister();
           }
 
           // Vérification des données fournies non valides
           if (!preg_match('/^[a-zA-ZÀ-ÿ\-]{1,60}$/', $data['firstname'])) {
-               return $this->exceptionManager->invalidDataProvided();
+               return $this->exceptionManager->invalidDataProvidedRegister();
           }
           if (!preg_match('/^[a-zA-ZÀ-ÿ\-]{1,60}$/', $data['lastname'])) {
-               return $this->exceptionManager->invalidDataProvided();
+               return $this->exceptionManager->invalidDataProvidedRegister();
           }
 
           // Format d'email invalide
           if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-               return $this->exceptionManager->invalidEmail();
+               return $this->exceptionManager->invalidEmailRegister();
           }
 
           // Format du mot de passe invalide
@@ -77,12 +77,12 @@ class RegisterController extends AbstractController
                !preg_match('/\d/', $data['password'])            ||         // au moins un chiffre
                !preg_match('/[^a-zA-Z0-9]/', $data['password'])             // au moins un caractère spécial
           ) {
-               return $this->exceptionManager->invalidPasswordCriteria();
+               return $this->exceptionManager->invalidPasswordCriteriaRegister();
           }
 
           // Format de la date de naissance invalide
           if (!preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $data['dateBirth'])) {
-               return $this->exceptionManager->invalidDateOfBirthFormat();
+               return $this->exceptionManager->invalidDateOfBirthFormatRegister();
           }
 
           // Extraction du jour, du mois et de l'année de la date de naissance
@@ -90,7 +90,7 @@ class RegisterController extends AbstractController
 
           // Vérification des limites de jour, mois et année
           if ($month > 12 || $day > 31 || $year > 2024) {
-               return $this->exceptionManager->invalidDateOfBirthFormat();
+               return $this->exceptionManager->invalidDateOfBirthFormatRegister();
           }
 
           // Calcul de l'âge
@@ -100,22 +100,22 @@ class RegisterController extends AbstractController
 
           // Age minimum non respecté (moins de 12 ans)
           if ($age <= 12) {
-               return $this->exceptionManager->minimumAgeNotMet();
+               return $this->exceptionManager->minimumAgeNotMetRegister();
           }
           
           $dateBirth = DateTime::createFromFormat('d/m/Y', $data['dateBirth'])->format('Y-m-d');
 
           // Format de téléphone invalide
           if (!empty($data['tel']) && !preg_match('/^0[1-9]([0-9]{2}){4}$/', $data['tel'])) {
-               return $this->exceptionManager->invalidPhoneNumberFormat();
+               return $this->exceptionManager->invalidPhoneFormatRegister();
           } else {
                $user->setTel("");
           }
 
-
+          // vérification du sexe
           if (!empty($data['sexe'])) {
                if (!in_array($data['sexe'], ['0', '1'])) {
-                    return $this->exceptionManager->invalidGenderValue();
+                    return $this->exceptionManager->invalidGenderValueRegister();
                }
               $user->setSexe($data['sexe'][0] == '0' ? 'Homme': 'Femme');
           } else {
@@ -123,13 +123,11 @@ class RegisterController extends AbstractController
           }
 
           // Email déjà utilisé
-          
           $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
           if ($existingUser !== null) {
-               return $this->exceptionManager->emailAlreadyUsed();
+               return $this->exceptionManager->emailAlreadyUsedRegister();
           }
           
-
           // Si tout est bon, register réussie
           $user->setIdUser("User_" . uniqid());
           $user->setFirstName($data['firstname']);
