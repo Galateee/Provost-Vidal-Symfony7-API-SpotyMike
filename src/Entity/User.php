@@ -38,13 +38,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(length: 15, nullable: true)]
-    private ?string $tel = null;
+    private ?string $tel = "";
 
     #[ORM\Column(length: 90)]
     private ?string $password = null;
 
     #[ORM\Column(length: 1, nullable: true)]
-    private ?int $nbTry = null;
+    private ?int $nbTry = 0;
+
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $isActive = true;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createAt = null;
@@ -165,7 +168,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setNbTry(?int $nbTry): static
     {
-        $this->nbTry = $nbTry !== null ? $nbTry : "";
+        $this->nbTry =  $nbTry ;
+    
+        return $this;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->nbTry;
+    }
+
+    public function setIsActive(?bool $isActive): static
+    {
+        $this->isActive =  $isActive ;
     
         return $this;
     }
@@ -248,6 +263,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             "email" => $this->getEmail(),
             "tel" => $this->getTel(),
             'nbTry' => $this->getNbTry(),
+            "isActive" => $this->getIsActive(),
             "createAt" => $this->getCreateAt(),
             "updateeAt" => $this->getUpdateAt(),
             "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [],

@@ -102,7 +102,7 @@ class RegisterController extends AbstractController
           if ($age <= 12) {
                return $this->exceptionManager->minimumAgeNotMetRegister();
           }
-          
+
           $dateBirth = DateTime::createFromFormat('d/m/Y', $data['dateBirth'])->format('Y-m-d');
 
           // Format de téléphone invalide
@@ -117,9 +117,9 @@ class RegisterController extends AbstractController
                if (!in_array($data['sexe'], ['0', '1'])) {
                     return $this->exceptionManager->invalidGenderValueRegister();
                }
-              $user->setSexe($data['sexe'][0] == '0' ? 'Homme': 'Femme');
+               $user->setSexe($data['sexe'][0] == '0' ? 'Homme' : 'Femme');
           } else {
-               $user -> setSexe("Homme");
+               $user->setSexe("Homme");
           }
 
           // Email déjà utilisé
@@ -127,7 +127,7 @@ class RegisterController extends AbstractController
           if ($existingUser !== null) {
                return $this->exceptionManager->emailAlreadyUsedRegister();
           }
-          
+
           // Si tout est bon, register réussie
           $user->setIdUser("User_" . uniqid());
           $user->setFirstName($data['firstname']);

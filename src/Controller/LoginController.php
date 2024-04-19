@@ -63,26 +63,28 @@ class LoginController extends AbstractController
         $data = $request->request->all();
 
         // Données manquante
-        if (!isset($data['email']) || !isset($data['password'])) {
-            return $this->exceptionManager->missingData();
+        if (
+            !isset($data['email']) ||
+            !isset($data['password'])
+        ) {
+            return $this->exceptionManager->missingDataLogin();
         }
 
         // Format d'email invalide
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            return $this->exceptionManager->invalidEmail();
+            return $this->exceptionManager->invalidEmailLogin();
         }
 
-        // Mot de passe ne respcte pas les critères
-        $password = $data['password'];
-        if (
-            strlen($password) < 8 ||                               // au moins 8 caractères
-            !preg_match('/[A-Z]/', $password) ||                   // au moins une majuscule
-            !preg_match('/[a-z]/', $password) ||                   // au moins une minuscule
-            !preg_match('/\d/', $password) ||                      // au moins un chiffre
-            !preg_match('/[^a-zA-Z0-9]/', $password)               // au moins un caractère spécial
-        ) {
-            return $this->exceptionManager->invalidPasswordCriteria();
-        }
+          // Format du mot de passe invalide
+          if (
+            strlen($data['password']) < 8                     ||         // au moins 8 caractères
+            !preg_match('/[A-Z]/', $data['password'])         ||         // au moins une majuscule
+            !preg_match('/[a-z]/', $data['password'])         ||         // au moins une minuscule
+            !preg_match('/\d/', $data['password'])            ||         // au moins un chiffre
+            !preg_match('/[^a-zA-Z0-9]/', $data['password'])             // au moins un caractère spécial
+       ) {
+            return $this->exceptionManager->invalidPasswordCriteriaLogin();
+       }
 
         // Votre logique de gestion de l'utilisateur, par exemple, récupérer l'utilisateur depuis la base de données
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
@@ -97,15 +99,14 @@ class LoginController extends AbstractController
         if (!password_verify($data['password'], $user->getPassword())) {
             return $this->exceptionManager->invalidPassword();
         }
-        */
 
         // Vérification du mot de passe pour mdp pas hashé
         if ($data['password'] !== $user->getPassword()) {
             return $this->exceptionManager->invalidPassword();
         }
+        */
 
         // Si tout est bon, authentification réussie
-        return new JsonResponse(['error' => 'false','message' => 'L\'utilisateur a été authentifié avec succès.'], 200);
-
+        return new JsonResponse(['error' => 'false', 'message' => 'L\'utilisateur a été authentifié avec succès.'], 200);
     }
 }
