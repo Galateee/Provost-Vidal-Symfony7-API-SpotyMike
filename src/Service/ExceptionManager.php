@@ -37,9 +37,15 @@ class ExceptionManager
      return new JsonResponse(['error' => true,'message' => 'Trop de tentatives de connexion (5 max). Veuillez réessayer ultérieurement - xxx min d\'attente'], 429);
     }
 
-    public function invalidDataProvidedRegister(): JsonResponse
+    // BONUS
+    public function userNotFoundLogin(): JsonResponse
     {
-        return new JsonResponse(['error' => true,'message' => 'Les données fournies sont invalides ou imcomplètes'], 400);
+     return new JsonResponse(['error' => true,'message' => 'L\'utilisateur n\'existe pas.'], 400);
+    }
+    // BONUS
+    public function invalidCredentialsLogin(): JsonResponse
+    {
+     return new JsonResponse(['error' => true,'message' => 'Mauvais mot de passe.'], 400);
     }
 
 
@@ -85,7 +91,12 @@ class ExceptionManager
     {
      return new JsonResponse(['error' => true,'message' => 'Cet email est déjà utilisé par un autre compte'], 409);
     }
-
+    
+    // BONUS
+    public function invalidDataProvidedRegister(): JsonResponse
+    {
+        return new JsonResponse(['error' => true,'message' => 'Les données fournies sont invalides ou imcomplètes'], 400);
+    }
 
 
     //route POST/user

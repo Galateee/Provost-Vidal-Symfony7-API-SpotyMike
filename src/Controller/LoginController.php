@@ -75,38 +75,58 @@ class LoginController extends AbstractController
             return $this->exceptionManager->invalidEmailLogin();
         }
 
-          // Format du mot de passe invalide
-          if (
+        // Format du mot de passe invalide
+        if (
             strlen($data['password']) < 8                     ||         // au moins 8 caractères
             !preg_match('/[A-Z]/', $data['password'])         ||         // au moins une majuscule
             !preg_match('/[a-z]/', $data['password'])         ||         // au moins une minuscule
             !preg_match('/\d/', $data['password'])            ||         // au moins un chiffre
             !preg_match('/[^a-zA-Z0-9]/', $data['password'])             // au moins un caractère spécial
-       ) {
+        ) {
             return $this->exceptionManager->invalidPasswordCriteriaLogin();
-       }
+        }
 
-        // Votre logique de gestion de l'utilisateur, par exemple, récupérer l'utilisateur depuis la base de données
+        // Récupération de l'utilisateur par son email
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
-        // Vérification si l'utilisateur existe
+        // Si aucun utilisateur n'est trouvé pour cet email
         if (!$user) {
-            return $this->exceptionManager->userDontExist();
+            return $this->exceptionManager->userNotFoundLogin();
         }
 
-        /*
-        // Vérification du mot de passe pour mdp hashé
+        // Compte non activé ou suspendu
+        if ($user->getIsActive() == false) {
+            return $this->exceptionManager->inactiveAccountLogin();
+        }
+
+        // Trop de tentatives 
+
+        // Vérification si le nombre de tentatives est supérieur ou égal à 5
+        if ($user->getNbTry() >= 5) {
+            return $this->exceptionManager->maxPasswordTryLogin();
+        }
+
+        // Vérification du mot de passe
         if (!password_verify($data['password'], $user->getPassword())) {
-            return $this->exceptionManager->invalidPassword();
+            // Augmentation du nombre de tentatives
+            $user->setNbTry($user->getNbTry() + 1);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            return $this->exceptionManager->invalidCredentialsLogin();
         }
 
-        // Vérification du mot de passe pour mdp pas hashé
-        if ($data['password'] !== $user->getPassword()) {
-            return $this->exceptionManager->invalidPassword();
-        }
-        */
+        // Réinitialisation du nombre de tentatives en cas de connexion réussie
+        $user->setNbTry(0);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
 
         // Si tout est bon, authentification réussie
-        return new JsonResponse(['error' => 'false', 'message' => 'L\'utilisateur a été authentifié avec succès.'], 200);
+        return $this->json([
+            'error' => false,
+            'message' => 'L\'utilisateur a été authentifié avec succès.',
+            'user' => $user->serializer(),
+       ], 200);
     }
 }

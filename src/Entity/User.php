@@ -175,7 +175,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getIsActive(): ?bool
     {
-        return $this->nbTry;
+        return $this->isActive;
     }
 
     public function setIsActive(?bool $isActive): static

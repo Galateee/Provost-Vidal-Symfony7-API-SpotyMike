@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ExceptionManager;
 use DateTime;
 
@@ -35,7 +36,7 @@ class RegisterController extends AbstractController
      }
 
      #[Route('/register', name: 'register', methods: ['POST'])]
-     public function register(Request $request): JsonResponse
+     public function register(Request $request, UserPasswordHasherInterface $passwordHash): JsonResponse
      {
 
           // REMARQUE :
@@ -133,7 +134,8 @@ class RegisterController extends AbstractController
           $user->setFirstName($data['firstname']);
           $user->setLastName($data['lastname']);
           $user->setEmail($data['email']);
-          $user->setPassword($data['password']);
+          $hash = $passwordHash->hashPassword($user, $data['password']);
+          $user->setPassword($hash);
           $user->setDateBirth($dateBirth);
           if (!empty($data['tel'])) {
                $user->setTel($data['tel']);

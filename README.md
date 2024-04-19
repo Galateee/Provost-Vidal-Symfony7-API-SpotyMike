@@ -1,7 +1,7 @@
 ## Etat des lieux:
 
 ```diff
-! 2: Route d'authentication d'un utilisateur POST /login -> manque succès, compte non activé ou suspendu et trop de tentatives (rate limiting)  
+! 2: Route d'authentication d'un utilisateur POST /login -> manque succès  
 + 3: Route d'inscription d'un utilisateur POST /register -> FINI  
 ! 4: Route de mise à jour de compte user POST /user -> manque non authentifié et erreur de validation  
 ! 5: Route de suppression du compte POST /password-lost -> manque trop de demandes  
