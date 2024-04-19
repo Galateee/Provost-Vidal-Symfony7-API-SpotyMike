@@ -140,8 +140,17 @@ class ExceptionManager
     {
         return new JsonResponse(['error' => true,'message' => 'Aucun artiste trouvé correspondant au nom fourni.'], 404);
     }
-    
-    
+
+    public function noAuthentication(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+    }
+
+    public function albumNotFound(): JsonResponse
+    {
+        return new JsonResponse(['error' => 'true','message' => 'Aucun album trouvé pour la page demandée.'], 404);
+    }
+
     
     // TODO
     // manque les erreurs de : "route de mise à jour de compte user" POST /user 
