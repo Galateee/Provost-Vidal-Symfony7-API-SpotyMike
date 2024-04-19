@@ -66,6 +66,11 @@ class ExceptionManager
      return new JsonResponse(['error' => true,'message' => 'L\'utilisateur doit avoir au moins 12 ans.'], 400);
     }
 
+    public function invalidPhoneFormatRegister(): JsonResponse
+    {
+     return new JsonResponse(['error' => true,'message' => 'Le format du numéro de téléphone est invalide.'], 400);
+    }
+
     public function invalidGenderValueRegister(): JsonResponse
     {
      return new JsonResponse(['error' => true,'message' => 'La valeur du champ sexe est invalide. Les valeurs autorisées sont 0 pour Femme, 1 pour Homme.'], 400);
