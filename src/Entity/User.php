@@ -28,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 55)]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 55)]
+    #[ORM\Column(length: 55, nullable: true)]
     private ?string $sexe = null;
 
     #[ORM\Column(length: 55)]
@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 90)]
     private ?string $password = null;
 
-    #[ORM\Column(length: 1)]
+    #[ORM\Column(length: 1, nullable: true)]
     private ?int $nbTry = null;
 
     #[ORM\Column]
@@ -114,9 +114,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->sexe;
     }
 
-    public function setSexe(?string $sexe): static
+    public function setSexe(string $sexe): static
     {
-        $this->sexe = $sexe !== null ? $sexe : "";
+        $this->sexe =  $sexe ;
     
         return $this;
     }

@@ -41,6 +41,8 @@ class RegisterController extends AbstractController
           // REMARQUE :
           // 
 
+          $user = new User();
+
           $data = $request->request->all();
 
           // Donnée manquante
@@ -106,11 +108,18 @@ class RegisterController extends AbstractController
           // Format de téléphone invalide
           if (!empty($data['tel']) && !preg_match('/^0[1-9]([0-9]{2}){4}$/', $data['tel'])) {
                return $this->exceptionManager->invalidPhoneNumberFormat();
+          } else {
+               $user->setTel("");
           }
 
-          // Valeur de sexe invalide
-          if (!empty($data['sexe']) && !in_array($data['sexe'], ['0', '1'])) {
-               return $this->exceptionManager->invalidGenderValue();
+
+          if (!empty($data['sexe'])) {
+               if (!in_array($data['sexe'], ['0', '1'])) {
+                    return $this->exceptionManager->invalidGenderValue();
+               }
+              $user->setSexe($data['sexe'][0] == '0' ? 'Homme': 'Femme');
+          } else {
+               $user -> setSexe("Homme");
           }
 
           // Email déjà utilisé
@@ -121,8 +130,7 @@ class RegisterController extends AbstractController
           }
           
 
-          // Si tout est bon, authentification réussie
-          $user = new User();
+          // Si tout est bon, register réussie
           $user->setIdUser("User_" . uniqid());
           $user->setFirstName($data['firstname']);
           $user->setLastName($data['lastname']);
@@ -131,9 +139,6 @@ class RegisterController extends AbstractController
           $user->setDateBirth($dateBirth);
           if (!empty($data['tel'])) {
                $user->setTel($data['tel']);
-          }
-          if (!empty($data['sexe'])) {
-               $user->setSexe($data['sexe']);
           }
           $user->setCreateAt(new \DateTimeImmutable());
           $user->setUpdateAt(new \DateTime());
