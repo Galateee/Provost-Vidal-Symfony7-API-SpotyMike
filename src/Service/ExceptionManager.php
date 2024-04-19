@@ -97,7 +97,7 @@ class ExceptionManager
 
     public function noAuthenticationUser(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function telAlreadyUsedUser(): JsonResponse
@@ -165,12 +165,12 @@ class ExceptionManager
 
     public function noAuthenticationAccDesa(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function isAccDesa(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Le compte est déjà désactivé.'], 409);
+        return new JsonResponse(['error' => true,'message' => 'Le compte est déjà désactivé.'], 409);
     }
 
 
@@ -189,7 +189,7 @@ class ExceptionManager
 
     public function noAuthenticationCreateArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function minimumAgeCreateArtist(): JsonResponse
@@ -228,7 +228,7 @@ class ExceptionManager
 
     public function noAuthenticationGetArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function NoArtistInPaginationGetArtist(): JsonResponse
@@ -252,7 +252,7 @@ class ExceptionManager
 
     public function noAuthenticationArtistFullname(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
     
     public function artistNotFoundArtistFullname(): JsonResponse
@@ -266,22 +266,22 @@ class ExceptionManager
 
     public function invalideParameterUpdateArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Les peramètres fournis sont invalides. Veuillez vérifier les données soumises.'], 400);
+        return new JsonResponse(['error' => true,'message' => 'Les peramètres fournis sont invalides. Veuillez vérifier les données soumises.'], 400);
     }
 
     public function noAuthenticationUpdateArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function accesDeniedUpdateArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Vous n\'êtes pas autorisé à accéder aux informations de cet artiste.'], 403);
+        return new JsonResponse(['error' => true,'message' => 'Vous n\'êtes pas autorisé à accéder aux informations de cet artiste.'], 403);
     }
 
     public function nameUsedUpdateArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Le nom d\'artiste est déjà utilisé. Veuillez choisir un autre nom.'], 409);
+        return new JsonResponse(['error' => true,'message' => 'Le nom d\'artiste est déjà utilisé. Veuillez choisir un autre nom.'], 409);
     }
 
 
@@ -290,17 +290,17 @@ class ExceptionManager
 
     public function noAuthenticationDeleteArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
     
     public function nameUsedDeleteArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Compte artiste non trouvé. Vérifiez les informations fournies et réessayez.'], 404);
+        return new JsonResponse(['error' => true,'message' => 'Compte artiste non trouvé. Vérifiez les informations fournies et réessayez.'], 404);
     }
 
     public function isDeleteArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Compte artiste est déjà désactivé.'], 410);
+        return new JsonResponse(['error' => true,'message' => 'Compte artiste est déjà désactivé.'], 410);
     }
 
 
@@ -314,12 +314,12 @@ class ExceptionManager
 
     public function noAuthenticationGetAlbums(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function albumNotFoundGetAlbums(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Aucun album trouvé pour la page demandée.'], 404);
+        return new JsonResponse(['error' => true,'message' => 'Aucun album trouvé pour la page demandée.'], 404);
     }
 
 
@@ -333,12 +333,12 @@ class ExceptionManager
 
     public function noAuthenticationAlbumId(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function albumNotFoundAlbumId(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'L\'album non trouvé. Vérifiez les informations fournies et réessayez.'], 404);
+        return new JsonResponse(['error' => true,'message' => 'L\'album non trouvé. Vérifiez les informations fournies et réessayez.'], 404);
     }
 
 
@@ -367,12 +367,12 @@ class ExceptionManager
 
     public function noAuthenticationSearch(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function albumNotFoundSearch(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Aucun album trouvé pour la page demandée.'], 404);
+        return new JsonResponse(['error' => true,'message' => 'Aucun album trouvé pour la page demandée.'], 404);
     }
 
     public function invalidYearSearch(): JsonResponse
@@ -401,18 +401,18 @@ class ExceptionManager
 
     public function noAuthenticationPostPutAlbum(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function noAutorisationPostPutAlbum(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Vous n\'avez pas l\'autorisation pour accéder à cet album.'], 403);
+        return new JsonResponse(['error' => true,'message' => 'Vous n\'avez pas l\'autorisation pour accéder à cet album.'], 403);
     }
 
     //uniquement pour la route PUT/album/{id}
     public function albumNotFoundPutAlbum(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Aucun album trouvé correspondant au nom fourni.'], 404);
+        return new JsonResponse(['error' => true,'message' => 'Aucun album trouvé correspondant au nom fourni.'], 404);
     }
 
     public function titleUsePostPutAlbum(): JsonResponse
@@ -446,17 +446,17 @@ class ExceptionManager
 
     public function noAuthenticationAlbumSong(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
+        return new JsonResponse(['error' => true,'message' => 'Authentification requise. Vous devez être connecté pour effectuer cette action.'], 401);
     }
 
     public function accessDeniedAlbumSong(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Vous n\'avez pas l\'autorisation pour accéder à cet album.'], 403);
+        return new JsonResponse(['error' => true,'message' => 'Vous n\'avez pas l\'autorisation pour accéder à cet album.'], 403);
     }
 
     public function notFoundAlbumSong(): JsonResponse
     {
-        return new JsonResponse(['error' => 'true','message' => 'Aucun album trouvé correspondant au nom fourni.'], 404);
+        return new JsonResponse(['error' => true,'message' => 'Aucun album trouvé correspondant au nom fourni.'], 404);
     }
 
     public function errorFormatFileAlbumSong(): JsonResponse
