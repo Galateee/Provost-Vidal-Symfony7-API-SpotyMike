@@ -72,7 +72,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/user', name: 'user_post', methods: ['POST'])]
-    public function register(Request $request): JsonResponse
+    public function user_post(Request $request): JsonResponse
     {
 
         $data = $request->request->all();
@@ -84,44 +84,40 @@ class UserController extends AbstractController
             empty($data['firstname']) &&
             empty($data['lastname'])
         ) {
-            return $this->exceptionManager->noDataProvided();
+            return $this->exceptionManager->invalidDataProvidedUser();
         }
 
         // Format de téléphone invalide
-        if (!empty($data['tel'])) {
-            $tel = $data['tel'];
-            if (!preg_match('/^0[1-9]([0-9]{2}){4}$/', $tel)) {
-                return $this->exceptionManager->invalidPhoneNumberFormat();
-            }
+        if (!empty($data['tel']) && !preg_match('/^0[1-9]([0-9]{2}){4}$/', $data['tel'])) {
+            return $this->exceptionManager->invalidPhoneNumberFormatUser();
         }
 
-        // Valeur de sexe invalide
-        if (!empty($data['sexe'])) {
-            $allowedGenders = ['0', '1', '']; // 0 pour femme, 1 pour homme, '' pour non spécifié
-            if (!in_array($data['sexe'], $allowedGenders)) {
-                return $this->exceptionManager->invalidGenderValue();
-            }
+        // vérification du sexe
+        if (!empty($data['sexe']) && !in_array($data['sexe'], ['0', '1'])) {
+            return $this->exceptionManager->invalidGenderValueRegisterUser();
         }
 
-        // Vérification des données fournies non valides
-        if (!empty($data['firstname']) && !preg_match('/^[a-zA-ZÀ-ÿ\-]+$/', $data['firstname'])) {
-            return $this->exceptionManager->invalidDataProvided();
-        }
-        if (!empty($data['lastname']) && !preg_match('/^[a-zA-ZÀ-ÿ\-]+$/', $data['lastname'])) {
-            return $this->exceptionManager->invalidDataProvided();
-        }
+        // Données fournies non valides
+        $allowedKeys = ['tel', 'sexe', 'firstname', 'lastname'];
+        $providedKeys = array_keys($data);
 
+        if (array_diff($providedKeys, $allowedKeys) || array_diff($allowedKeys, $providedKeys)) {
+            return $this->exceptionManager->invalidDataProvidedUser();
+        }
 
         // Non authentifié A FAIRE
 
         // Conflit dans les données
         $existingUser = $this->repository->findOneBy(['tel' => $data['tel']]);
         if ($existingUser !== null) {
-            return $this->exceptionManager->telAlreadyUsed();
+            return $this->exceptionManager->telAlreadyUsedUser();
         }
 
         // Erreur de validation A FAIRE
+        if(!preg_match('/^[a-zA-ZÀ-ÿ\-]{2,60}$/', $data['firstname']) || !preg_match('/^[a-zA-ZÀ-ÿ\-]{2,60}$/', $data['lastname'])) {
+            return $this->exceptionManager->errorDataValidationUser();
+        }
 
-        return new JsonResponse(['error' => 'false','message' => 'Votre inscription a bien été prise en compte'], 200);
+        return new JsonResponse(['error' => false, 'message' => 'Votre inscription a bien été prise en compte'], 200);
     }
 }

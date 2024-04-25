@@ -121,7 +121,6 @@ class LoginController extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-
         // Si tout est bon, authentification réussie
         return $this->json([
             'error' => false,

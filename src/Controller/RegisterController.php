@@ -58,10 +58,10 @@ class RegisterController extends AbstractController
           }
 
           // Vérification des données fournies non valides
-          if (!preg_match('/^[a-zA-ZÀ-ÿ\-]{1,60}$/', $data['firstname'])) {
+          if (!preg_match('/^[a-zA-ZÀ-ÿ\-]{2,60}$/', $data['firstname'])) {
                return $this->exceptionManager->invalidDataProvidedRegister();
           }
-          if (!preg_match('/^[a-zA-ZÀ-ÿ\-]{1,60}$/', $data['lastname'])) {
+          if (!preg_match('/^[a-zA-ZÀ-ÿ\-]{2,60}$/', $data['lastname'])) {
                return $this->exceptionManager->invalidDataProvidedRegister();
           }
 
