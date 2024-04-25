@@ -89,7 +89,7 @@ class ExceptionManager
 
     public function emailAlreadyUsedRegister(): JsonResponse
     {
-     return new JsonResponse(['error' => true,'message' => 'Cet email est déjà utilisé par un autre compte'], 409);
+     return new JsonResponse(['error' => true,'message' => 'Cet email est déjà utilisé par un autre compte.'], 409);
     }
     
     // BONUS
