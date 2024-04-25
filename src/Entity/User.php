@@ -23,10 +23,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $idUser = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $firstName = null;
+    private ?string $firstname = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $lastName = null;
+    private ?string $lastname = null;
 
     #[ORM\Column(length: 55, nullable: true)]
     private ?string $sexe = null;
@@ -88,26 +88,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getFirstname(): ?string
     {
-        return $this->firstName;
+        return $this->firstname;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstname(string $firstname): static
     {
-        $this->firstName = $firstName;
+        $this->firstname = $firstname;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getLastname(): ?string
     {
-        return $this->lastName;
+        return $this->lastname;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastname(string $lastname): static
     {
-        $this->lastName = $lastName;
+        $this->lastname = $lastname;
 
         return $this;
     }
@@ -256,8 +256,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return [
             "id" => $this->getId(),
             "idUser" => $this->getIdUser(),
-            "firstName" => $this->getFirstName(),
-            "lastName" => $this->getLastName(),
+            "firstname" => $this->getFirstname(),
+            "lastname" => $this->getLastname(),
             "sexe" => $this->getSexe(),
             "dateBirth" => $this->getDateBirth(),
             "email" => $this->getEmail(),

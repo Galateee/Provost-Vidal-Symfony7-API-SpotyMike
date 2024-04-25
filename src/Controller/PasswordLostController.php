@@ -24,25 +24,25 @@ class PasswordLostController extends AbstractController
           $this->repository = $entityManager->getRepository(User::class);
      }
 
-     #[Route('/password-lost', name: 'password-lost', methods: 'POST')]
-     public function index(Request $request): JsonResponse
+     #[Route('/password-lost', name: 'password_lost', methods: 'POST')]
+     public function password_lost(Request $request): JsonResponse
      {
           $data = $request->request->all();
 
           // Email manquant
           if (empty($data['email'])) {
-               return $this->exceptionManager->EmailMissing();
+               return $this->exceptionManager->EmailMissingPassLost();
           }
 
           // Format d'email invalide 
           if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-               return $this->exceptionManager->invalidEmail();
+               return $this->exceptionManager->invalidEmailPassLost();
           }
 
           // Email non trouvé
           $existingUser = $this->repository->findOneBy(['email' => $data['email']]);
           if ($existingUser === null) {
-               return $this->exceptionManager->emailNotFound();
+               return $this->exceptionManager->emailNotFoundPassLost();
           }
 
           // Trop de demande
@@ -54,7 +54,7 @@ class PasswordLostController extends AbstractController
           $timestamp1 = time(); 
           $timestamp2 = $existingUser->getUpdateAt()->getTimestamp() +300; 
           if ($timestamp1 > $timestamp2 || $nbTry >= 5 ){
-               return $this->exceptionManager->maxPasswordTry();
+               return $this->exceptionManager->lotTryPassLost();
           }
           else {
           }                           
