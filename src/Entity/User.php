@@ -50,6 +50,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $isActive = true;
 
     #[ORM\Column]
+    private ?\DateTimeImmutable $lastTryTimestamp = null;
+
+    #[ORM\Column]
     private ?\DateTimeImmutable $createAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -197,6 +200,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getLastTryTimestamp(): ?\DateTimeImmutable
+    {
+        return $this->lastTryTimestamp;
+    }
+
+    public function setLastTryTimestamp(\DateTimeImmutable $lastTryTimestamp): static
+    {
+        $this->lastTryTimestamp = $lastTryTimestamp;
+
+        return $this;
+    }
+
     public function getCreateAt(): ?\DateTimeImmutable
     {
         return $this->createAt;
@@ -264,6 +279,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             "tel" => $this->getTel(),
             'nbTry' => $this->getNbTry(),
             "isActive" => $this->getIsActive(),
+            "lastTryTimestamp" => $this->getLastTryTimestamp(),
             "createAt" => $this->getCreateAt(),
             "updateeAt" => $this->getUpdateAt(),
             "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [],

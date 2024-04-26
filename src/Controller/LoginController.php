@@ -55,12 +55,9 @@ class LoginController extends AbstractController
     public function login(Request $request): JsonResponse
     {
 
-        // REMARQUE :
-        // Si le password n'est pas le bon par rapport à l'email -> succes quand même
-        // 
-        // BONUS : ajout d'une exception "vérification si l'utilisateur existe"            
-
         $data = $request->request->all();
+
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         // Données manquante
         if (
@@ -86,9 +83,6 @@ class LoginController extends AbstractController
             return $this->exceptionManager->invalidPasswordCriteriaLogin();
         }
 
-        // Récupération de l'utilisateur par son email
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-
         // Si aucun utilisateur n'est trouvé pour cet email
         if (!$user) {
             return $this->exceptionManager->userNotFoundLogin();
@@ -99,11 +93,21 @@ class LoginController extends AbstractController
             return $this->exceptionManager->inactiveAccountLogin();
         }
 
-        // Trop de tentatives 
-
-        // Vérification si le nombre de tentatives est supérieur ou égal à 5
+        // Trop de tentatives :
+        // Vérification du nombre de tentatives et du délai entre les tentatives infructueuses
         if ($user->getNbTry() >= 5) {
-            return $this->exceptionManager->maxPasswordTryLogin();
+            $lastTryTimestamp = $user->getLastTryTimestamp();
+            $fiveMinutesAgo = (new \DateTimeImmutable())->sub(new \DateInterval('PT5M'));
+            if ($lastTryTimestamp >= $fiveMinutesAgo) {
+                // L'utilisateur doit attendre
+                return $this->exceptionManager->maxPasswordTryLogin();
+            } else {
+                // Réinitialisation du compteur de tentatives
+                $user->setNbTry(0);
+                $user->setLastTryTimestamp(new \DateTimeImmutable());
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+            }
         }
 
         // Vérification du mot de passe
@@ -114,18 +118,19 @@ class LoginController extends AbstractController
             $this->entityManager->flush();
 
             return $this->exceptionManager->invalidCredentialsLogin();
-        }
-
-        // Réinitialisation du nombre de tentatives en cas de connexion réussie
-        $user->setNbTry(0);
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        } else {
+            // Réinitialisation du compteur de tentatives
+            $user->setNbTry(0);
+            $user->setLastTryTimestamp(new \DateTimeImmutable());
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+       }
 
         // Si tout est bon, authentification réussie
         return $this->json([
             'error' => false,
             'message' => 'L\'utilisateur a été authentifié avec succès.',
             'user' => $user->serializer(),
-       ], 200);
+        ], 200);
     }
 }

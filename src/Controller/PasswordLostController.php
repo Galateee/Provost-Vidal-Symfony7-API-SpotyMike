@@ -28,6 +28,7 @@ class PasswordLostController extends AbstractController
      public function password_lost(Request $request): JsonResponse
      {
           $data = $request->request->all();
+          $user = $this->repository->findOneBy(['email' => $data['email']]);
 
           // Email manquant
           if (empty($data['email'])) {
@@ -40,24 +41,42 @@ class PasswordLostController extends AbstractController
           }
 
           // Email non trouvé
-          $existingUser = $this->repository->findOneBy(['email' => $data['email']]);
-          if ($existingUser === null) {
+          if ($user === null) {
                return $this->exceptionManager->emailNotFoundPassLost();
           }
 
-          // Trop de demande
-          $existingUser -> setUpdateAt(new DateTime()); 
-          $nbTry = ($existingUser -> getNbTry()) ? $existingUser -> getNbTry() : 0; // 0 par défaut
-          $existingUser -> setNbTry  ( $nbTry++); 
-          $this->entityManager->persist($existingUser);
-          $this->entityManager->flush();
-          $timestamp1 = time(); 
-          $timestamp2 = $existingUser->getUpdateAt()->getTimestamp() +300; 
-          if ($timestamp1 > $timestamp2 || $nbTry >= 5 ){
-               return $this->exceptionManager->lotTryPassLost();
+          // Trop de tentatives :
+          // Vérification du nombre de tentatives et du délai entre les tentatives infructueuses
+          if ($user->getNbTry() >= 3) {
+               $lastTryTimestamp = $user->getLastTryTimestamp();
+               $fiveMinutesAgo = (new \DateTimeImmutable())->sub(new \DateInterval('PT1M'));
+               if ($lastTryTimestamp >= $fiveMinutesAgo) {
+                    // L'utilisateur doit attendre
+                    return $this->exceptionManager->lotTryPassLost();
+               } else {
+                    // Réinitialisation du compteur de tentatives
+                    $user->setNbTry(0);
+                    $user->setLastTryTimestamp(new \DateTimeImmutable());
+                    $this->entityManager->persist($user);
+                    $this->entityManager->flush();
+               }
           }
-          else {
-          }                           
+
+          // Vérification du mot de passe
+          if (!password_verify($data['password'], $user->getPassword())) {
+               // Augmentation du nombre de tentatives
+               $user->setNbTry($user->getNbTry() + 1);
+               $this->entityManager->persist($user);
+               $this->entityManager->flush();
+
+               return $this->exceptionManager->invalidCredentialsLogin();
+          } else {
+               // Réinitialisation du compteur de tentatives
+               $user->setNbTry(0);
+               $user->setLastTryTimestamp(new \DateTimeImmutable());
+               $this->entityManager->persist($user);
+               $this->entityManager->flush();
+          }
 
           return new JsonResponse(['success' => 'true', 'message' => 'Un mail de réinitialisation de mot de pass a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour éinitialiser votre mot de passe'], 200);
      }
