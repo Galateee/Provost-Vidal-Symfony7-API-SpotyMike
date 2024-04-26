@@ -18,11 +18,13 @@ class UserController extends AbstractController
     private $exceptionManager;
     private $repository;
     private $entityManager;
+    private $tokenVerifier;
 
-    public function __construct(ExceptionManager $exceptionManager, EntityManagerInterface $entityManager)
+    public function __construct(ExceptionManager $exceptionManager, EntityManagerInterface $entityManager, TokenVerifierService $tokenVerifier)
     {
         $this->exceptionManager = $exceptionManager;
         $this->entityManager = $entityManager;
+        $this->tokenVerifier = $tokenVerifier;
         $this->repository = $entityManager->getRepository(User::class);
     }
 
@@ -106,6 +108,10 @@ class UserController extends AbstractController
         }
 
         // Non authentifié A FAIRE
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if(gettype($dataMiddellware) == 'boolean'){
+            return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware));
+        }
 
         // Conflit dans les données
         $existingUser = $this->repository->findOneBy(['tel' => $data['tel']]);

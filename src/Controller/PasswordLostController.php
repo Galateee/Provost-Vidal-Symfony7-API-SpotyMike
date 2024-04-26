@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class PasswordLostController extends AbstractController
 {
@@ -25,7 +26,7 @@ class PasswordLostController extends AbstractController
      }
 
      #[Route('/password-lost', name: 'password_lost', methods: 'POST')]
-     public function password_lost(Request $request): JsonResponse
+     public function password_lost(Request $request, JWTTokenManagerInterface $JWTManager): JsonResponse
      {
           $data = $request->request->all();
           $user = $this->repository->findOneBy(['email' => $data['email']]);
@@ -78,6 +79,9 @@ class PasswordLostController extends AbstractController
                $this->entityManager->flush();
           }
 
-          return new JsonResponse(['success' => true, 'message' => 'Un mail de réinitialisation de mot de pass a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour éinitialiser votre mot de passe'], 200);
+          return new JsonResponse([
+               'success' => true, 
+               'token' => $JWTManager->create($user),
+               'message' => 'Un mail de réinitialisation de mot de pass a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour éinitialiser votre mot de passe'], 200);
      }
 }
