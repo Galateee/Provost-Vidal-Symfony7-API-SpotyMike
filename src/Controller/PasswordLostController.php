@@ -78,6 +78,6 @@ class PasswordLostController extends AbstractController
                $this->entityManager->flush();
           }
 
-          return new JsonResponse(['success' => 'true', 'message' => 'Un mail de réinitialisation de mot de pass a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour éinitialiser votre mot de passe'], 200);
+          return new JsonResponse(['success' => true, 'message' => 'Un mail de réinitialisation de mot de pass a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour éinitialiser votre mot de passe'], 200);
      }
 }

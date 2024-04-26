@@ -23,12 +23,17 @@ class AccountDeactivationController extends AbstractController
           $this->repository = $entityManager->getRepository(User::class);
      }
 
-     #[Route('/account-deactivation', name: 'account-deactivation', methods: 'DELETE')]
-     public function index(Request $request): JsonResponse
+     #[Route('/account-deactivation', name: 'account_deactivation', methods: 'DELETE')]
+     public function account_deactivation(Request $request): JsonResponse
      {
           $data = $request->request->all();
 
 
-          return new JsonResponse(['success' => 'true', 'message' => 'Votre compte a été désactivé avec succès. Nous sommes désolés de vous voir partir.'], 200);
+          //Non authentifié A FAIRE
+
+          //Compte déjà désactivé
+
+
+          return new JsonResponse(['success' => true, 'message' => 'Votre compte a été désactivé avec succès. Nous sommes désolés de vous voir partir.'], 200);
      }
 }

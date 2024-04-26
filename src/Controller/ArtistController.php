@@ -137,7 +137,7 @@ class ArtistController extends AbstractController
         }
 
         // pas oublié de gérer l'envoie de artist_id
-        return new JsonResponse(['succes' => 'true', 'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !', 'artist_id' => ''], 201);
+        return new JsonResponse(['succes' => true, 'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !', 'artist_id' => ''], 201);
     }
 
     #[Route('/artist', name: 'artist_get', methods: 'GET')]

@@ -39,9 +39,6 @@ class RegisterController extends AbstractController
      public function register(Request $request, UserPasswordHasherInterface $passwordHash): JsonResponse
      {
 
-          // REMARQUE :
-          // 
-
           $user = new User();
 
           $data = $request->request->all();

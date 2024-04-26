@@ -23,8 +23,8 @@ class ResetPasswordController extends AbstractController
           $this->repository = $entityManager->getRepository(User::class);
      }
 
-     #[Route('/reset-password/{token}', name: 'reset-password', methods: 'GET')]
-     public function index(Request $request): JsonResponse
+     #[Route('/reset-password/{token}', name: 'reset_password', methods: 'GET')]
+     public function reset_password(Request $request): JsonResponse
      {
           $data = $request->request->all();
 
@@ -32,7 +32,7 @@ class ResetPasswordController extends AbstractController
 
           // Nouveau mot de passe manquant
           if (empty($data['password'])) {
-               return $this->exceptionManager->invalidNewPassword();
+               return $this->exceptionManager->newMDPResetPass();
           }
 
           // Format du nouveau mot de passe invalide
@@ -44,12 +44,12 @@ class ResetPasswordController extends AbstractController
                !preg_match('/\d/', $password) ||                      // au moins un chiffre
                !preg_match('/[^a-zA-Z0-9]/', $password)               // au moins un caractère spécial
           ) {
-               return $this->exceptionManager->invalidNewPasswordCriteria();
+               return $this->exceptionManager->invalidFormatMDPResetPass();
           }
 
           // Token expiré A FAIRE
 
 
-          return new JsonResponse(['success' => 'true', 'message' => 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.'], 200);
+          return new JsonResponse(['success' => true, 'message' => 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.'], 200);
      }
 }
