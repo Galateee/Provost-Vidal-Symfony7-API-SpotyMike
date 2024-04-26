@@ -80,7 +80,7 @@ class ArtistController extends AbstractController
     }
 
     #[Route('/artist', name: 'artist_post', methods: 'POST')]
-    public function create(Request $request): JsonResponse
+    public function artist_post(Request $request): JsonResponse
     {
         /*
         $artist = new Artist();
@@ -109,12 +109,12 @@ class ArtistController extends AbstractController
             !isset($data['label'])  ||
             !isset($data['fullname'])
         ) {
-            return $this->exceptionManager->missingData();
+            return $this->exceptionManager->noDataCreateArtist();
         }
 
         // Format de l'id du label invalide
         if (!preg_match("/^[a-zA-Z0-9_]+$/", $data['label'])) {
-            return $this->exceptionManager->invalidLabelFormat();
+            return $this->exceptionManager->invalidLabelFormatCreateArtist();
         }
 
         // Non authentifié A FAIRE
@@ -125,16 +125,20 @@ class ArtistController extends AbstractController
         $today = new DateTimeImmutable();
         $age = $today->diff($birthdate)->y;
         if ($age < $minimumAge) {
-            return $this->exceptionManager->minimumAgeForArtist();
+            return $this->exceptionManager->minimumAgeCreateArtist();
         }
-
-        // Compte artist existant pour l'utilisateur A FAIRE 
 
         // Nom d'artist déja utilisé
         $existingArtist = $this->repository->findOneBy(['fullname' => $data['fullname']]);
         if ($existingArtist !== null) {
-            return $this->exceptionManager->artistAllreadyExist();
+            return $this->exceptionManager->artistAlreadyExistCreateArtist();
         }
+
+        // Erreur de décodage 
+
+        // Format de fichier non pris en charge 
+
+        // Taille du fichier trop/pas assez volumineux 
 
         // pas oublié de gérer l'envoie de artist_id
         return new JsonResponse(['succes' => true, 'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !', 'artist_id' => ''], 201);

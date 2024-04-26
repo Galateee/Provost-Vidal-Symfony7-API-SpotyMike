@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class LoginController extends AbstractController
 {
@@ -52,7 +53,7 @@ class LoginController extends AbstractController
     */
 
     #[Route('/login', name: 'login', methods: ['POST'])]
-    public function login(Request $request): JsonResponse
+    public function login(Request $request, JWTTokenManagerInterface $JWTManager): JsonResponse
     {
 
         $data = $request->request->all();
@@ -128,6 +129,7 @@ class LoginController extends AbstractController
 
         // Si tout est bon, authentification réussie
         return $this->json([
+            'token' => $JWTManager->create($user),
             'error' => false,
             'message' => 'L\'utilisateur a été authentifié avec succès.',
             'user' => $user->serializer(),

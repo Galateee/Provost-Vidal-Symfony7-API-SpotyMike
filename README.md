@@ -6,8 +6,8 @@
 ! 4: Route de création de compte user POST /user -> manque non authentifié  
 ! 5: Route de password lost POST /password-lost -> manque token dans le succes  
 ! 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> manque token manquant ou invalide et token expiré  
-! 7: Route de suppression du compte DELETE /account-deactivation -> manque succes, non authentifié et compte déjà désactivé  
-! 8: Route création artist POST /artist -> manque succes, non authentifié et compte artist existant pour l'utilisateur   
+! 7: Route de suppression du compte DELETE /account-deactivation -> manque non authentifié et compte déjà désactivé  
+! 8: Route création artist POST /artist -> manque succes, non authentifié,   erreur de décodage, format de fichie rnon prus en charge, taille du fichier trop/pas assez volumineux  
 ! 9: Route de récupération de toutes les infos des artistes GET /artist -> manque succes et non authentifié  
 ! 10: Route de récupération de toutes les infos d'un artiste GET /artist/xxx -> manque succes et non authentifié  
 - 11: Route de mise à jour de compte artist POST /artist -> pas fait  
