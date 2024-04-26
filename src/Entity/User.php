@@ -19,7 +19,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     // #[ORM\Id]
-    #[ORM\Column(length: 90, unique:true)]
+    #[ORM\Column(length: 90, unique: true)]
     private ?string $idUser = null;
 
     #[ORM\Column(length: 55)]
@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 55)]
     private ?\DateTimeImmutable $dateBirth = null;
 
-    #[ORM\Column(length: 80, unique:true)]
+    #[ORM\Column(length: 80, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(length: 15, nullable: true)]
@@ -122,8 +122,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setSexe(string $sexe): static
     {
-        $this->sexe =  $sexe ;
-    
+        $this->sexe =  $sexe;
+
         return $this;
     }
 
@@ -171,8 +171,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setNbTry(?int $nbTry): static
     {
-        $this->nbTry =  $nbTry ;
-    
+        $this->nbTry =  $nbTry;
+
         return $this;
     }
 
@@ -183,8 +183,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setIsActive(?bool $isActive): static
     {
-        $this->isActive =  $isActive ;
-    
+        $this->isActive =  $isActive;
+
         return $this;
     }
 
@@ -196,7 +196,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTel(?string $tel): static
     {
         $this->tel = $tel !== null ? $tel : "";
-    
+
         return $this;
     }
 
@@ -253,16 +253,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRoles(): array{
+    public function getRoles(): array
+    {
 
         return ["PUBLIC_ACCESS"];
     }
 
-    public function eraseCredentials(): void{
-
+    public function eraseCredentials(): void
+    {
     }
 
-    public function getUserIdentifier(): string{
+    public function getUserIdentifier(): string
+    {
         return $this->getEmail();
     }
 
@@ -283,6 +285,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             "createAt" => $this->getCreateAt(),
             "updateeAt" => $this->getUpdateAt(),
             "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [],
+        ];
+    }
+
+    public function serializerLogin()
+    {
+        return [
+            "firstname" => $this->getFirstname(),
+            "lastname" => $this->getLastname(),
+            "email" => $this->getEmail(),
+            "tel" => $this->getTel(),
+            "sexe" => $this->getSexe(),
+            "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [],
+            "dateBirth" => $this->getDateBirth(),
+            "createAt" => $this->getCreateAt(),
+        ];
+    }
+
+    public function serializerRegister()
+    {
+        return [
+            "firstname" => $this->getFirstname(),
+            "lastname" => $this->getLastname(),
+            "email" => $this->getEmail(),
+            "tel" => $this->getTel(),
+            "sexe" => $this->getSexe(),
+            "dateBirth" => $this->getDateBirth(),
+            "createAt" => $this->getCreateAt(),
+            "updateeAt" => $this->getUpdateAt(),
         ];
     }
 

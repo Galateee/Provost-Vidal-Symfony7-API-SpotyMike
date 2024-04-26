@@ -137,14 +137,16 @@ class RegisterController extends AbstractController
           if (!empty($data['tel'])) {
                $user->setTel($data['tel']);
           }
+          $user->setLastTryTimestamp(new \DateTimeImmutable());
           $user->setCreateAt(new \DateTimeImmutable());
           $user->setUpdateAt(new \DateTime());
           $this->entityManager->persist($user);
           $this->entityManager->flush();
+
           return $this->json([
                'error' => false,
                'message' => 'L\'utilisateur a bien été créé avec succès.',
-               'user' => $user->serializer(),
+               'user' => $user->serializerRegister(),
           ], 201);
      }
 }
