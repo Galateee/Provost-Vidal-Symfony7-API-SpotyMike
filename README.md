@@ -3,8 +3,8 @@
 ```diff
 + 2: Route d'authentication d'un utilisateur POST /login -> FINI 
 + 3: Route d'inscription d'un utilisateur POST /register -> FINI  
-! 4: Route de création de compte user POST /user -> manque non authentifié  
-! 5: Route de password lost POST /password-lost -> corriver nbtry 
++ 4: Route de création de compte user POST /user -> FINI
+! 5: Route de password lost POST /password-lost -> corriger nbtry 
 ! 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> manque token manquant ou invalide et token expiré  
 ! 7: Route de suppression du compte DELETE /account-deactivation -> manque non authentifié et compte déjà désactivé  
 ! 8: Route création artist POST /artist -> manque succes, non authentifié,   erreur de décodage, format de fichie rnon prus en charge, taille du fichier trop/pas assez volumineux  
@@ -19,3 +19,5 @@
 - 17: Route de modification d'un album -> pas fait  
 - 18: Route d'ajout de song -> pas fait  
 ```
+Questions:  
+Est ce que le /user doit créer un utilisateur?  

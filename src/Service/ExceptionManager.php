@@ -34,7 +34,7 @@ class ExceptionManager
 
     public function maxPasswordTryLogin(): JsonResponse
     {
-     return new JsonResponse(['error' => true,'message' => 'Trop de tentatives de connexion (5 max). Veuillez réessayer ultérieurement - xxx min d\'attente'], 429);
+     return new JsonResponse(['error' => true,'message' => 'Trop de tentatives de connexion (5 max). Veuillez réessayer ultérieurement - 2 min d\'attente.'], 429);
     }
 
     // BONUS
@@ -113,7 +113,7 @@ class ExceptionManager
 
     public function invalidDataProvidedUser(): JsonResponse
     {
-        return new JsonResponse(['error' => true,'message' => 'Les données fournies sont invalides ou imcomplètes'], 400);
+        return new JsonResponse(['error' => true,'message' => 'Les données fournies sont invalides ou incomplètes.'], 400);
     }
 
     public function noAuthenticationUser(): JsonResponse
@@ -123,7 +123,7 @@ class ExceptionManager
 
     public function telAlreadyUsedUser(): JsonResponse
     {
-        return new JsonResponse(['error' => true,'message' => 'Conflit de données. Le numéro de téléphone est déjà utilisé par  un autre utilisateur.'], 409);
+        return new JsonResponse(['error' => true,'message' => 'Conflit de données. Le numéro de téléphone est déjà utilisé par un autre utilisateur.'], 409);
     }
 
     public function errorDataValidationUser(): JsonResponse

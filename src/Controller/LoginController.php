@@ -98,7 +98,7 @@ class LoginController extends AbstractController
         // Vérification du nombre de tentatives et du délai entre les tentatives infructueuses
         if ($user->getNbTry() >= 5) {
             $lastTryTimestamp = $user->getLastTryTimestamp();
-            $fiveMinutesAgo = (new \DateTimeImmutable())->sub(new \DateInterval('PT5M'));
+            $fiveMinutesAgo = (new \DateTimeImmutable())->sub(new \DateInterval('PT2M'));
             if ($lastTryTimestamp >= $fiveMinutesAgo) {
                 // L'utilisateur doit attendre
                 return $this->exceptionManager->maxPasswordTryLogin();

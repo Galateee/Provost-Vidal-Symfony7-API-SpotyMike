@@ -77,6 +77,8 @@ class UserController extends AbstractController
     public function user_post(Request $request): JsonResponse
     {
 
+        $user = new User();
+
         $data = $request->request->all();
 
         // Vérifier si aucune donnée n'est envoyée
@@ -95,35 +97,62 @@ class UserController extends AbstractController
         }
 
         // vérification du sexe
-        if (!empty($data['sexe']) && !in_array($data['sexe'], ['0', '1'])) {
-            return $this->exceptionManager->invalidGenderValueRegisterUser();
+        if (!empty($data['sexe'])) {
+            if (!in_array($data['sexe'], ['0', '1'])) {
+                return $this->exceptionManager->invalidGenderValueRegisterUser();
+            }
+            $user->setSexe($data['sexe'][0] == '0' ? 'Homme' : 'Femme');
+        } else {
+            $user->setSexe("Homme");
         }
 
         // Données fournies non valides
         $allowedKeys = ['tel', 'sexe', 'firstname', 'lastname'];
         $providedKeys = array_keys($data);
 
-        if (array_diff($providedKeys, $allowedKeys) || array_diff($allowedKeys, $providedKeys)) {
+        if (array_diff($providedKeys, $allowedKeys)) {
             return $this->exceptionManager->invalidDataProvidedUser();
         }
 
-        // Non authentifié A FAIRE
+        // Non authentifié
         $dataMiddellware = $this->tokenVerifier->checkToken($request);
-        if(gettype($dataMiddellware) == 'boolean'){
+        if (gettype($dataMiddellware) == 'boolean') {
             return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware));
         }
 
         // Conflit dans les données
-        $existingUser = $this->repository->findOneBy(['tel' => $data['tel']]);
-        if ($existingUser !== null) {
-            return $this->exceptionManager->telAlreadyUsedUser();
+        if (!empty($data['tel'])) {
+            $existingUser = $this->repository->findOneBy(['tel' => $data['tel']]);
+            if ($existingUser !== null) {
+                return $this->exceptionManager->telAlreadyUsedUser();
+            }
         }
 
-        // Erreur de validation A FAIRE
-        if(!preg_match('/^[a-zA-ZÀ-ÿ\-]{2,60}$/', $data['firstname']) || !preg_match('/^[a-zA-ZÀ-ÿ\-]{2,60}$/', $data['lastname'])) {
+        // Erreur de validation
+        if (!empty($data['firstname']) && !preg_match('/^[a-zA-ZÀ-ÿ\-]{2,60}$/', $data['firstname'])) {
+            return $this->exceptionManager->errorDataValidationUser();
+        }
+        if (!empty($data['lastname']) && !preg_match('/^[a-zA-ZÀ-ÿ\-]{2,60}$/', $data['lastname'])) {
             return $this->exceptionManager->errorDataValidationUser();
         }
 
-        return new JsonResponse(['error' => false, 'message' => 'Votre inscription a bien été prise en compte'], 200);
+        /*
+        $user->setIdUser("User_" . uniqid());
+        $user->setFirstname($data['firstname']);
+        $user->setLastname($data['lastname']);
+        $user->setTel($data['tel']);
+
+        $user->setLastTryTimestamp(new \DateTimeImmutable());
+        $user->setCreateAt(new \DateTimeImmutable());
+        $user->setUpdateAt(new \DateTime());
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        */
+
+        return $this->json([
+            'error' => false,
+            'message' => 'Votre inscription a bien été prise en compte'
+        ], 200);
     }
 }
