@@ -152,7 +152,7 @@ class ExceptionManager
 
     public function lotTryPassLost(): JsonResponse
     {
-     return new JsonResponse(['error' => true,'message' => 'Trop de demandes de réinitialisation de mot de passe (3 max). Veuillez attendre avant de réessayer (Dans xxx min).'], 429);
+     return new JsonResponse(['error' => true,'message' => 'Trop de demandes de réinitialisation de mot de passe ( 3 max ). Veuillez attendre avant de réessayer ( Dans 5 min).'], 429);
     }
 
 

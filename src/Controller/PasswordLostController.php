@@ -29,21 +29,27 @@ class PasswordLostController extends AbstractController
      public function password_lost(Request $request, JWTTokenManagerInterface $JWTManager): JsonResponse
      {
           $data = $request->request->all();
-          $user = $this->repository->findOneBy(['email' => $data['email']]);
 
-          // Email manquant
-          if (empty($data['email'])) {
+          if (isset($data['email'])) {
+
+               $user = $this->repository->findOneBy(['email' => $data['email']]);
+
+               // Email manquant
+               if (empty($data['email'])) {
+                    return $this->exceptionManager->EmailMissingPassLost();
+               }
+
+               // Format d'email invalide 
+               if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                    return $this->exceptionManager->invalidEmailPassLost();
+               }
+
+               // Email non trouvé
+               if ($user === null) {
+                    return $this->exceptionManager->emailNotFoundPassLost();
+               }
+          } else {
                return $this->exceptionManager->EmailMissingPassLost();
-          }
-
-          // Format d'email invalide 
-          if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-               return $this->exceptionManager->invalidEmailPassLost();
-          }
-
-          // Email non trouvé
-          if ($user === null) {
-               return $this->exceptionManager->emailNotFoundPassLost();
           }
 
           // Trop de tentatives :
@@ -63,25 +69,15 @@ class PasswordLostController extends AbstractController
                }
           }
 
-          // Vérification du mot de passe
-          if (!password_verify($data['password'], $user->getPassword())) {
-               // Augmentation du nombre de tentatives
-               $user->setNbTry($user->getNbTry() + 1);
-               $this->entityManager->persist($user);
-               $this->entityManager->flush();
-
-               return $this->exceptionManager->invalidCredentialsLogin();
-          } else {
-               // Réinitialisation du compteur de tentatives
-               $user->setNbTry(0);
-               $user->setLastTryTimestamp(new \DateTimeImmutable());
-               $this->entityManager->persist($user);
-               $this->entityManager->flush();
-          }
+          $user->setNbTry($user->getNbTry() + 1);
+          $user->setLastTryTimestamp(new \DateTimeImmutable());
+          $this->entityManager->persist($user);
+          $this->entityManager->flush();
 
           return new JsonResponse([
-               'success' => true, 
+               'success' => true,
                'token' => $JWTManager->create($user),
-               'message' => 'Un mail de réinitialisation de mot de pass a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour éinitialiser votre mot de passe'], 200);
+               'message' => 'Un email de réinitialisation de mot de passe a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour réinitialiser votre mot de passe.'
+          ], 200);
      }
 }

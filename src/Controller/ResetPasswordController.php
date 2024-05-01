@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class ResetPasswordController extends AbstractController
 {
@@ -23,8 +24,8 @@ class ResetPasswordController extends AbstractController
           $this->repository = $entityManager->getRepository(User::class);
      }
 
-     #[Route('/reset-password/{token}', name: 'reset_password', methods: 'GET')]
-     public function reset_password(Request $request): JsonResponse
+     #[Route('/reset-password/{token}', name: 'reset_password', methods: 'POST')]
+     public function reset_password(string $token, Request $request, JWTTokenManagerInterface $JWTManager): JsonResponse
      {
           $data = $request->request->all();
 
@@ -49,7 +50,9 @@ class ResetPasswordController extends AbstractController
 
           // Token expiré A FAIRE
 
-
-          return new JsonResponse(['success' => true, 'message' => 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.'], 200);
+          return new JsonResponse([
+               'success' => true,
+               'message' => 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.'
+          ], 200);
      }
 }
