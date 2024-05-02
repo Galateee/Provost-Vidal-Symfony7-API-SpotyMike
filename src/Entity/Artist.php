@@ -171,6 +171,21 @@ class Artist
         ];
     }
 
+    public function serializerGetAll($children = false)
+    {
+        return [
+
+            "firstname" => $this->getUserIdUser()->getFirstName(),
+            "lastname" => $this->getUserIdUser()->getLastName(),
+            "fullname" => $this->getFullName(),
+            "sexe" => $this->getUserIdUser()->getSexe(),
+            "dateBirth" => $this->getUserIdUser()->getDateBirth(),
+            //"artist.createdAt" => $this->getUserIdUser()->getArtistCreatedAt(),
+            "albums" => $this->getAlbums(),
+
+        ];
+    }
+
     /**
      * @return Collection<int, User>
      */

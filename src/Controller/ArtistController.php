@@ -170,21 +170,26 @@ class ArtistController extends AbstractController
             'success' => true,
             'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !',
             'artist_id' => $user->getIdUser(),
-
         ], 201);
     }
 
     #[Route('/artist', name: 'artist_get', methods: 'GET')]
-    public function read(Request $request): JsonResponse
+    public function artist_get(Request $request): JsonResponse
     {
-        $data = $request->request->all();
+        // récuperer tout les data recu
+        $rawContent = $request->getContent();
+        parse_str($rawContent, $data);
 
         // Paramètre de pagination invalide 
         if (!is_numeric($data['currentPage']) || $data['currentPage'] <= 0) {
             return $this->exceptionManager->invalidPaginationValueGetArtist();
         }
 
-        // Non authentifié A FAIRE
+        // Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware), 401);
+        }
 
         // Aucun artiste trouvé
         $currentPage = $data['currentPage'];
@@ -192,14 +197,39 @@ class ArtistController extends AbstractController
 
         $offset = ($currentPage - 1) * $artistsPerPage;
 
+        $totalArtists = $this->repository->count();
+
+        $totalPages = ceil($totalArtists / $artistsPerPage);
+
         $artists = $this->repository->findBy([], null, $artistsPerPage, $offset);
 
         if (empty($artists)) {
             return $this->exceptionManager->NoArtistInPaginationGetArtist();
         }
 
-        // A FAIRE
-        return new JsonResponse(['succes' => 'true', 'message' => ''], 200);
+        $result = [];
+
+        try {
+            if (count($artists = $this->repository->findAll()) > 0)
+                foreach ($artists as $artist) {
+                    array_push($result, $artist->serializerGetAll());
+                }
+            return new JsonResponse([
+                'error' => false,
+                'artists' => $result,
+                'message' => 'Informations des artistes récupérées avec succès.',
+                'pagination'=>[
+                    'currentPage'=>$currentPage,
+                    'totalPages'=>$totalPages,
+                    'totalArtists'=> $totalArtists,
+                ],
+            ], 201);
+        } catch (\Exception $exception) {
+            return new JsonResponse([
+                'message' => $exception->getMessage()
+            ], 404);
+        }
+
     }
 
     #[Route('/artist/{fullname}', name: 'artist_get_info', methods: ['GET'])]
