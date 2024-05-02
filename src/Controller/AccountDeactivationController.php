@@ -30,7 +30,7 @@ class AccountDeactivationController extends AbstractController
      public function account_deactivation(Request $request): JsonResponse
      {
 
-          //Non authentifié A FAIRE
+          //Non authentifié
           $dataMiddellware = $this->tokenVerifier->checkToken($request);
           if (gettype($dataMiddellware) == 'boolean') {
                return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware),401);

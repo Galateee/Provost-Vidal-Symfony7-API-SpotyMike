@@ -21,26 +21,10 @@ class Artist
     private ?User $User_idUser = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $fullName = null;
-
-    #[ORM\Column(length: 55)]
-    private ?string $sexe = null;
-
-    #[ORM\Column(length: 55)]
-    private ?string $tel = null;
-
-    #[ORM\Column(length: 55)]
-    private ?\DateTimeImmutable $birthDate = null;
+    private ?string $fullname = null;
 
     #[ORM\Column(length: 90)]
     private ?string $label = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createAt = null;
-
-    #[ORM\Column]
-    private ?\DateTimeInterface $updateAt = null;
-
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -82,55 +66,18 @@ class Artist
         return $this;
     }
 
-    public function getFullName(): ?string
+    public function getfullname(): ?string
     {
-        return $this->fullName;
+        return $this->fullname;
     }
 
-    public function setFullName(string $fullName): static
+    public function setfullname(string $fullname): static
     {
-        $this->fullName = $fullName;
+        $this->fullname = $fullname;
 
         return $this;
     }
-
-    public function getSexe(): ?string
-    {
-        return $this->sexe;
-    }
-
-    public function setSexe(string $sexe): static
-    {
-        $this->sexe = $sexe;
-
-        return $this;
-    }
-
     
-    public function getTel(): ?string
-    {
-        return $this->tel;
-    }
-
-    public function setTel(string $tel): static
-    {
-        $this->tel = $tel;
-
-        return $this;
-    }
-
-    public function getBirthDate(): ?\DateTimeImmutable
-    {
-        return $this->birthDate;
-    }
-
-    public function setBirthDate(\DateTimeImmutable $birthDate): static
-    {
-        $this->birthDate = $birthDate;
-
-        return $this;
-    }
-
     public function getLabel(): ?string
     {
         return $this->label;
@@ -151,30 +98,6 @@ class Artist
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getCreateAt(): ?\DateTimeImmutable
-    {
-        return $this->createAt;
-    }
-
-    public function setCreateAt(\DateTimeImmutable $createAt): static
-    {
-        $this->createAt = $createAt;
-
-        return $this;
-    }
-
-    public function getUpdateAt(): ?\DateTimeInterface
-    {
-        return $this->updateAt;
-    }
-
-    public function setUpdateAt(\DateTimeInterface $updateAt): static
-    {
-        $this->updateAt = $updateAt;
 
         return $this;
     }
@@ -241,14 +164,9 @@ class Artist
         return [
             "id" => $this->getId(),
             "idUser" => ($children) ? $this->getUserIdUser() : null,
-            "fullName" => $this->getFullName(),
-            "sexe" => $this->getSexe(),
-            "tel" => $this->getTel(),
-            "birthDate" => $this->getBirthDate(),
+            "fullname" => $this->getfullname(),
             "label" => $this->getLabel(),
             "description" => $this->getDescription(),
-            "createAt" => $this->getCreateAt(),
-            "updateAt" => $this->getUpdateAt(),
             "songs" => $this->getSongs()
         ];
     }

@@ -238,8 +238,20 @@ class ExceptionManager
         return new JsonResponse(['error' => true,'message' => 'Le fichier envoyé est trop ou pas assez volumineux. Vous devez respecter la taille entre 1Mb et 7Mb.'], 422);
     }
 
+    // BONUS :
+
+    public function invalidFullnameFormatCreateArtist(): JsonResponse
+    {
+        return new JsonResponse(['error' => true,'message' => 'Le format du fullname est invalide.'], 400);
+    }
+
+    public function userAlreadyHasArtist(): JsonResponse
+    {
+        return new JsonResponse(['error' => true,'message' => 'Vous êtes déjà un artist.'], 400);
+    }
 
 
+    
     //route GET/artist
 
     public function invalidPaginationValueGetArtist(): JsonResponse
