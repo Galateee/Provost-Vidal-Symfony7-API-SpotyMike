@@ -117,7 +117,7 @@ class UserController extends AbstractController
         // Non authentifié
         $dataMiddellware = $this->tokenVerifier->checkToken($request);
         if (gettype($dataMiddellware) == 'boolean') {
-            return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware));
+            return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware), 401);
         }
 
         // Conflit dans les données
