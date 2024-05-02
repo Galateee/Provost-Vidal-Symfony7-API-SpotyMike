@@ -8,7 +8,7 @@
 ! 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> QUAND TOKEN DANS URL ERROR 404 ( cause: les "." dans le token ) manque token manquant ou invalide et token expiré  
 + 7: Route de suppression du compte DELETE /account-deactivation -> FINI  
 ! 8: Route création artist POST /artist -> manque succes, erreur de décodage, format de fichier non pris en charge, taille du fichier trop/pas assez volumineux  
-! 9: Route de récupération de toutes les infos des artistes GET /artist -> manque succes et non authentifié  
++ 9: Route de récupération de toutes les infos des artistes GET /artist -> FINI  
 ! 10: Route de récupération de toutes les infos d'un artiste GET /artist/xxx -> manque succes et non authentifié  
 - 11: Route de mise à jour de compte artist POST /artist -> pas fait  
 - 12: Route de désactivation du compte artist DELETE /artist -> pas fait  
