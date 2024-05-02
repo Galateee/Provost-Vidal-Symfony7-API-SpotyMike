@@ -48,12 +48,12 @@ class TokenVerifierService
         return false;
     }
 
-    /*
+    
     public function createToken(string $email): string
     {
         return $this->jwtProvider->create(["email" => $email, "exp" => time()+120, "iat" => time()])->getToken();
     }
-    */
+    
 
     public function sendJsonErrorToken($nullToken): array
     {
