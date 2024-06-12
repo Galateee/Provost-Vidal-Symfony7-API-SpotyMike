@@ -7,7 +7,7 @@
 ! 5: Route de password lost POST /password-lost -> manque la création des token avex expiration de 2 min
 + 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> FINI
 + 7: Route de suppression du compte DELETE /account-deactivation -> FINI  
-! 8: Route création artist POST /artist -> manque succes, erreur de décodage, format de fichier non pris en charge, taille du fichier trop/pas assez volumineux  
+! 8: Route création artist POST /artist -> 
 + 9: Route de récupération de toutes les infos des artistes GET /artist -> FINI  
 ! 10: Route de récupération de toutes les infos d'un artiste GET /artist/xxx -> manque succes et non authentifié  
 - 11: Route de mise à jour de compte artist POST /artist -> pas fait  

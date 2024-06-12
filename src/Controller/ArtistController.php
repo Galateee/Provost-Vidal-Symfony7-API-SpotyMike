@@ -89,14 +89,14 @@ class artistController extends AbstractController
 
         // Donnée obligatoires manquantes 
         if (
-            !isset($data['label'])  ||
-            !isset($data['fullname'])
+            !isset($data['label']) || $data['label'] == "" ||
+            !isset($data['fullname']) || $data['fullname'] == ""
         ) {
             return $this->exceptionManager->noDataCreateArtist();
         }
 
         // Format du fullname invalide
-        if (!preg_match('/^[a-zA-ZÀ-ÿ\-]{2,30}$/', $data['fullname'])) {
+        if (!preg_match('/^[\w\W]{2,30}$/', $data['fullname'])) {
             return $this->exceptionManager->invalidFullnameFormatCreateArtist();
         }
 
@@ -108,7 +108,7 @@ class artistController extends AbstractController
         // Non authentifié
         $dataMiddellware = $this->tokenVerifier->checkToken($request);
         if (gettype($dataMiddellware) == 'boolean') {
-            return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware), 401);
+            return $this->exceptionManager->noAuthenticationCreateArtist();
         }
 
         $user = $dataMiddellware;
@@ -135,8 +135,27 @@ class artistController extends AbstractController
 
             $explodeData = explode(",", $data['avatar']);
             if (count($explodeData) == 2) {
+                $file = base64_decode($explodeData[1], true);
 
-                $file = base64_decode($data['avatar']);
+                // Erreur de décodage
+                if ($file === false) {
+                    return $this->exceptionManager->decodageCreateArtist();
+                }
+
+                // Format de fichier non pris en charge 
+                $mimeType = explode(';', explode(':', $explodeData[0])[1])[0];
+                if (!in_array($mimeType, ['image/jpeg', 'image/png'])) {
+                    return $this->exceptionManager->errorFormatFileCreateArtist();
+                }
+
+                // Taille du fichier trop/pas assez volumineux 
+                $fileSize = strlen($file);
+                $minSize = 1 * 1024 * 1024 / 8; // 1 MB
+                $maxSize = 7 * 1024 * 1024 / 8; // 5 MB
+                if ($fileSize < $minSize || $fileSize > $maxSize) {
+                    return $this->exceptionManager->sizeFileCreateArtist();
+                }
+
                 $chemin = $this->getParameter('upload_directory') . '/' . $user->getEmail();
                 if (!file_exists($chemin)) {
                     mkdir($chemin);
@@ -145,12 +164,7 @@ class artistController extends AbstractController
             }
         }
 
-        // Erreur de décodage
-
-        // Format de fichier non pris en charge 
-
-        // Taille du fichier trop/pas assez volumineux 
-
+        // à revoir... dans le  dd($artist) -> artist = null et les données ne sont pas dans artist: []
 
         $artist = new Artist;
         $artist->setLabel($data["label"]);
@@ -164,8 +178,6 @@ class artistController extends AbstractController
         $this->entityManager->persist($artist);
         $this->entityManager->flush();
 
-
-        // pas oublié de gérer l'envoie de artist_id
         return $this->json([
             'success' => true,
             'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !',
