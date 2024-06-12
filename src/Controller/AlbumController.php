@@ -16,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ExceptionManager;
 
-class AlbumController extends AbstractController
+class albumController extends AbstractController
 {
 
     private $exceptionManager;

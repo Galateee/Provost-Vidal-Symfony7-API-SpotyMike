@@ -12,7 +12,7 @@ use App\Service\ExceptionManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class resetPassword extends AbstractController
+class resetPasswordController extends AbstractController
 {
      private $exceptionManager;
      private $repository;

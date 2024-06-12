@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
 
-class AccountDeactivationController extends AbstractController
+class accountDeactivationController extends AbstractController
 {
      private $exceptionManager;
      private $repository;

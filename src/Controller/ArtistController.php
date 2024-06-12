@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
 
-class ArtistController extends AbstractController
+class artistController extends AbstractController
 {
 
     private $exceptionManager;

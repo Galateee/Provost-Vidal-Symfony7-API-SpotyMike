@@ -4,6 +4,6 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class LabelController extends AbstractController
+class labelController extends AbstractController
 {
 }
