@@ -247,30 +247,34 @@ class artistController extends AbstractController
     }
 
     #[Route('/artist/{fullname}', name: 'artist_get_info', methods: ['GET'])]
-    public function getInfo(string $fullname): JsonResponse
+    public function artist_get_info(?string $fullname = null, Request $request): JsonResponse
     {
-        // Nom d'artiste non fourni
-        if (empty($fullname)) {
+        // Vérifier si le fullname est vide ou non fourni
+        if ($fullname === null || trim($fullname) === '') {
             return $this->exceptionManager->missingArtistNameArtistFullname();
         }
-
+    
         // Format du nom d'artiste invalide
-        if (!preg_match("/^[a-zA-Z\s]+$/", $fullname)) {
+        if (!preg_match('/^[\w\W]{2,30}$/', $fullname)) {
             return $this->exceptionManager->invalidArtistNameFormatArtistFullname();
         }
-
-        // Non authentifié A FAIRE
+    
+        // Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationArtistFullname();
+        }
 
         // Artiste non trouvé
         $artist = $this->repository->findOneBy(['fullname' => $fullname]);
         if (!$artist) {
             return $this->exceptionManager->artistNotFoundArtistFullname();
         }
-
+    
         // Succès
         return $this->json([
             'artist' => $artist->serializer(),
             'message' => 'Artist information retrieved successfully.',
         ]);
-    }
+    }    
 }
