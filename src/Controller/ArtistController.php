@@ -172,6 +172,7 @@ class artistController extends AbstractController
             $artist->setDescription($data["description"]);
         }
         //$artist->setDescription($data["description"]);
+        $artist->setArtistCreateAt(new \DateTimeImmutable());
 
         $this->entityManager->persist($artist);
         $this->entityManager->flush();
@@ -195,19 +196,19 @@ class artistController extends AbstractController
         parse_str($rawContent, $data);
 
         // Paramètre de pagination invalide 
-        if (!is_numeric($data['currentPage']) || $data['currentPage'] <= 0) {
+        if (!isset($data['currentPage']) || !is_numeric($data['currentPage']) || $data['currentPage'] <= 0) {
             return $this->exceptionManager->invalidPaginationValueGetArtist();
         }
 
         // Non authentifié
         $dataMiddellware = $this->tokenVerifier->checkToken($request);
         if (gettype($dataMiddellware) == 'boolean') {
-            return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware), 401);
+            return $this->exceptionManager->noAuthenticationGetArtist();
         }
 
         // Aucun artiste trouvé
         $currentPage = $data['currentPage'];
-        $artistsPerPage = 5;
+        $artistsPerPage = isset($data['limit']) && is_numeric($data['limit']) ? (int)$data['limit'] : 5;
 
         $offset = ($currentPage - 1) * $artistsPerPage;
 
