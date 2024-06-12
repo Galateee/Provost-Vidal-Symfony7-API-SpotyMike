@@ -32,7 +32,7 @@ class AccountDeactivationController extends AbstractController
           //Non authentifié
           $dataMiddellware = $this->tokenVerifier->checkToken($request);
           if (gettype($dataMiddellware) == 'boolean') {
-               return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware), 401);
+               return $this->exceptionManager->noAuthenticationAccDesa();
           }
 
           $user = $dataMiddellware;
