@@ -151,7 +151,7 @@ class artistController extends AbstractController
                 // Taille du fichier trop/pas assez volumineux 
                 $fileSize = strlen($file);
                 $minSize = 1 * 1024 * 1024 / 8; // 1 MB
-                $maxSize = 7 * 1024 * 1024 / 8; // 5 MB
+                $maxSize = 7 * 1024 * 1024 / 8; // 7 MB
                 if ($fileSize < $minSize || $fileSize > $maxSize) {
                     return $this->exceptionManager->sizeFileCreateArtist();
                 }
@@ -164,18 +164,20 @@ class artistController extends AbstractController
             }
         }
 
-        // à revoir... dans le  dd($artist) -> artist = null et les données ne sont pas dans artist: []
-
         $artist = new Artist;
-        $artist->setLabel($data["label"]);
+        $artist->setUserIdUser($user);
         $artist->setFullname($data["fullname"]);
+        $artist->setLabel($data["label"]);
         if (!empty($data['description'])) {
             $artist->setDescription($data["description"]);
         }
-        $artist->setUserIdUser($user);
-        $artist->setDescription($data["description"]);
+        //$artist->setDescription($data["description"]);
 
         $this->entityManager->persist($artist);
+        $this->entityManager->flush();
+
+        $user->setArtist($artist);
+        $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         return $this->json([

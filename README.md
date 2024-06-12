@@ -1,13 +1,13 @@
 ## Etat des lieux:
 
 ```diff
-+ 2: Route d'authentication d'un utilisateur POST /login -> FINI 
++ 2: Route d'authentication d'un utilisateur POST /login -> FINI  
 + 3: Route d'inscription d'un utilisateur POST /register -> FINI  
-+ 4: Route de création de compte user POST /user -> FINI
-! 5: Route de password lost POST /password-lost -> manque la création des token avex expiration de 2 min
-+ 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> FINI
++ 4: Route de création de compte user POST /user -> FINI  
+! 5: Route de password lost POST /password-lost -> manque la création des token avex expiration de 2 min  
++ 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> FINI  
 + 7: Route de suppression du compte DELETE /account-deactivation -> FINI  
-! 8: Route création artist POST /artist -> 
++ 8: Route création artist POST /artist -> FINI  
 + 9: Route de récupération de toutes les infos des artistes GET /artist -> FINI  
 ! 10: Route de récupération de toutes les infos d'un artiste GET /artist/xxx -> manque succes et non authentifié  
 - 11: Route de mise à jour de compte artist POST /artist -> pas fait  
