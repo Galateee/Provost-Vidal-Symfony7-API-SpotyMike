@@ -123,7 +123,7 @@ class login extends AbstractController
             $user->setLastTryTimestamp(new \DateTimeImmutable());
             $this->entityManager->persist($user);
             $this->entityManager->flush();
-       }
+        }
 
         // Si tout est bon, authentification réussie
         return $this->json([

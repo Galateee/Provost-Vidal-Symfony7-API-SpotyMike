@@ -160,10 +160,10 @@ class ArtistController extends AbstractController
         }
         $artist->setUserIdUser($user);
         $artist->setDescription($data["description"]);
-        
+
         $this->entityManager->persist($artist);
         $this->entityManager->flush();
-        
+
 
         // pas oublié de gérer l'envoie de artist_id
         return $this->json([
@@ -218,10 +218,10 @@ class ArtistController extends AbstractController
                 'error' => false,
                 'artists' => $result,
                 'message' => 'Informations des artistes récupérées avec succès.',
-                'pagination'=>[
-                    'currentPage'=>$currentPage,
-                    'totalPages'=>$totalPages,
-                    'totalArtists'=> $totalArtists,
+                'pagination' => [
+                    'currentPage' => $currentPage,
+                    'totalPages' => $totalPages,
+                    'totalArtists' => $totalArtists,
                 ],
             ], 201);
         } catch (\Exception $exception) {
@@ -229,7 +229,6 @@ class ArtistController extends AbstractController
                 'message' => $exception->getMessage()
             ], 404);
         }
-
     }
 
     #[Route('/artist/{fullname}', name: 'artist_get_info', methods: ['GET'])]

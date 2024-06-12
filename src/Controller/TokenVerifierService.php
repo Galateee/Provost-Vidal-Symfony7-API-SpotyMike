@@ -48,12 +48,24 @@ class TokenVerifierService
         return false;
     }
 
-    
+    public function checkTokenWithParam($token)
+    {
+        try {
+            $dataToken = $this->jwtProvider->load($token);
+            if ($dataToken->isVerified($token)) {
+                $user = $this->userRepository->findOneBy(["email" => $dataToken->getPayload()["username"]]);
+                return ($user) ? $user : false;
+            }
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
+
     public function createToken(string $email): string
     {
-        return $this->jwtProvider->create(["email" => $email, "exp" => time()+120, "iat" => time()])->getToken();
+        return $this->jwtProvider->create(["email" => $email, "exp" => time() + 120, "iat" => time()])->getToken();
     }
-    
+
 
     public function sendJsonErrorToken($nullToken): array
     {

@@ -17,7 +17,6 @@ class AccountDeactivationController extends AbstractController
      private $entityManager;
      private $tokenVerifier;
 
-
      public function __construct(ExceptionManager $exceptionManager, EntityManagerInterface $entityManager, TokenVerifierService $tokenVerifier)
      {
           $this->exceptionManager = $exceptionManager;
@@ -33,7 +32,7 @@ class AccountDeactivationController extends AbstractController
           //Non authentifié
           $dataMiddellware = $this->tokenVerifier->checkToken($request);
           if (gettype($dataMiddellware) == 'boolean') {
-               return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware),401);
+               return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware), 401);
           }
 
           $user = $dataMiddellware;

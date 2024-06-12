@@ -12,16 +12,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
-class PasswordLostController extends AbstractController
+class passwordLost extends AbstractController
 {
      private $exceptionManager;
      private $repository;
      private $entityManager;
+     private $tokenVerifier;
 
-     public function __construct(ExceptionManager $exceptionManager, EntityManagerInterface $entityManager)
+     public function __construct(ExceptionManager $exceptionManager, EntityManagerInterface $entityManager, TokenVerifierService $tokenVerifier)
      {
           $this->exceptionManager = $exceptionManager;
           $this->entityManager = $entityManager;
+          $this->tokenVerifier = $tokenVerifier;
           $this->repository = $entityManager->getRepository(User::class);
      }
 
@@ -56,7 +58,7 @@ class PasswordLostController extends AbstractController
           // Vérification du nombre de tentatives et du délai entre les tentatives infructueuses
           if ($user->getNbTry() >= 3) {
                $lastTryTimestamp = $user->getLastTryTimestamp();
-               $fiveMinutesAgo = (new \DateTimeImmutable())->sub(new \DateInterval('PT1M'));
+               $fiveMinutesAgo = (new \DateTimeImmutable())->sub(new \DateInterval('PT5M'));
                if ($lastTryTimestamp >= $fiveMinutesAgo) {
                     // L'utilisateur doit attendre
                     return $this->exceptionManager->lotTryPassLost();
@@ -74,9 +76,19 @@ class PasswordLostController extends AbstractController
           $this->entityManager->persist($user);
           $this->entityManager->flush();
 
+          $currentDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+          $expiration = clone $currentDateTime;
+          $expiration->modify('+2 minutes');
+
+          $token = $JWTManager->create($user, ['exp' => $expiration->getTimestamp()]);
+
+          // Remplacer tous les points dans le token par des esperluettes
+          $tokenWithAmpersands = str_replace('.', '&', $token);
+
+
           return new JsonResponse([
                'success' => true,
-               'token' => $JWTManager->create($user),
+               'token' => $tokenWithAmpersands,
                'message' => 'Un email de réinitialisation de mot de passe a été envoyé à votre adresse email. Veuillez suivre les instructions contenues dans l\'email pour réinitialiser votre mot de passe.'
           ], 200);
      }

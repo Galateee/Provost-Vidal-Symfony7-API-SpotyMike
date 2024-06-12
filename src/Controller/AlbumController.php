@@ -30,11 +30,11 @@ class AlbumController extends AbstractController
         $this->repository = $entityManager->getRepository(User::class);
     }
 
-    
+
     #[Route('/artist', name: 'artist_post', methods: 'POST')]
     public function createArtist(Request $request): JsonResponse
     {
-        
+
         $artist = new Artist();
         return $this->json([
             'artist' => $artist->serializer(),
@@ -46,10 +46,10 @@ class AlbumController extends AbstractController
     #[Route('/albums', name: 'albums_get', methods: 'GET')]
     public function create(Request $request): JsonResponse
     {
-        
+
         $album = new Album();
         $album->setName("The Weeknd");
-        $album->setCategory("Pop");           
+        $album->setCategory("Pop");
         $album->setCover("My Dear Melancholy");
         $album->setYear(new DateTimeImmutable());
         $album->setArtistUserIdUser($artist);
@@ -62,7 +62,7 @@ class AlbumController extends AbstractController
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/AlbumController.php',
         ]);
-    
+
 
         $data = $request->request->all();
 

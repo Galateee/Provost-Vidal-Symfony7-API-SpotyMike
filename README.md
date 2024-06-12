@@ -4,8 +4,8 @@
 + 2: Route d'authentication d'un utilisateur POST /login -> FINI 
 + 3: Route d'inscription d'un utilisateur POST /register -> FINI  
 + 4: Route de création de compte user POST /user -> FINI
-+ 5: Route de password lost POST /password-lost -> FINI  
-! 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> QUAND TOKEN DANS URL ERROR 404 ( cause: les "." dans le token ) manque token manquant ou invalide et token expiré  
+! 5: Route de password lost POST /password-lost -> manque la création des token avex expiration de 2 min
++ 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> FINI
 + 7: Route de suppression du compte DELETE /account-deactivation -> FINI  
 ! 8: Route création artist POST /artist -> manque succes, erreur de décodage, format de fichier non pris en charge, taille du fichier trop/pas assez volumineux  
 + 9: Route de récupération de toutes les infos des artistes GET /artist -> FINI  
@@ -20,4 +20,4 @@
 - 18: Route d'ajout de song -> pas fait  
 ```
 Questions:  
-Est ce que le /user doit créer un utilisateur?  
+Est ce que le /user doit créer un utilisateur?  / Qu'est ce que /user est censé faire?

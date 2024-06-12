@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ExceptionManager;
 
-class UserController extends AbstractController
+class userController extends AbstractController
 {
     private $exceptionManager;
     private $repository;
@@ -35,7 +35,7 @@ class UserController extends AbstractController
         $this->entityManager->flush();
         return $this->json([
             'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/UserController.php',
+            'path' => 'src/Controller/userController.php',
         ]);
     }
 
@@ -48,7 +48,7 @@ class UserController extends AbstractController
         // $jsonContent = $serializer->serialize($person, 'json');
         return $this->json([
             'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/UserController.php',
+            'path' => 'src/Controller/userController.php',
         ]);
     }
 
