@@ -12,7 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ExceptionManager;
 use DateTime;
 
-class RegisterController extends AbstractController
+class register extends AbstractController
 {
 
      private $exceptionManager;
@@ -31,7 +31,7 @@ class RegisterController extends AbstractController
      {
           return $this->json([
                'message' => 'Welcome GET work',
-               'path' => 'src/Controller/RegisterController.php',
+               'path' => 'src/Controller/register.php',
           ]);
      }
 

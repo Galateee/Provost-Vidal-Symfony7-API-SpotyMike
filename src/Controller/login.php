@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
-class LoginController extends AbstractController
+class login extends AbstractController
 {
 
     private $exceptionManager;
@@ -30,7 +30,7 @@ class LoginController extends AbstractController
     {
         return $this->json([
             'message' => 'Welcome GET work',
-            'path' => 'src/Controller/LoginController.php',
+            'path' => 'src/Controller/login.php',
         ]);
     }
 
@@ -47,7 +47,7 @@ class LoginController extends AbstractController
             'user' => json_encode($user->serializer()),
             'data' => $request->getContent(),
             'message' => 'Welcome to MikeLand',
-            'path' => 'src/Controller/LoginController.php',
+            'path' => 'src/Controller/login.php',
         ]);
     }
     */
@@ -57,8 +57,6 @@ class LoginController extends AbstractController
     {
 
         $data = $request->request->all();
-
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         // Données manquante
         if (
@@ -84,6 +82,7 @@ class LoginController extends AbstractController
             return $this->exceptionManager->invalidPasswordCriteriaLogin();
         }
 
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         // Si aucun utilisateur n'est trouvé pour cet email
         if (!$user) {
             return $this->exceptionManager->userNotFoundLogin();
@@ -98,7 +97,7 @@ class LoginController extends AbstractController
         // Vérification du nombre de tentatives et du délai entre les tentatives infructueuses
         if ($user->getNbTry() >= 5) {
             $lastTryTimestamp = $user->getLastTryTimestamp();
-            $fiveMinutesAgo = (new \DateTimeImmutable())->sub(new \DateInterval('PT2M'));
+            $fiveMinutesAgo = (new \DateTimeImmutable())->sub(new \DateInterval('PT5M'));
             if ($lastTryTimestamp >= $fiveMinutesAgo) {
                 // L'utilisateur doit attendre
                 return $this->exceptionManager->maxPasswordTryLogin();
@@ -117,7 +116,6 @@ class LoginController extends AbstractController
             $user->setNbTry($user->getNbTry() + 1);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
-
             return $this->exceptionManager->invalidCredentialsLogin();
         } else {
             // Réinitialisation du compteur de tentatives
