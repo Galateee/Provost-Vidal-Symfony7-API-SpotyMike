@@ -30,57 +30,7 @@ class artistController extends AbstractController
         $this->repository = $entityManager->getRepository(Artist::class);
     }
 
-    #[Route('/artist', name: 'artist_put', methods: 'PUT')]
-    public function update(): JsonResponse
-    {
-        $phone = "0668000000";
-        if (preg_match("/^[0-9]{10}$/", $phone)) {
-
-            $artist = $this->repository->findOneBy(["id" => 1]);
-            $old = $artist->getTel();
-            $artist->setTel($phone);
-            $this->entityManager->flush();
-            return $this->json([
-                "New_tel" => $artist->getTel(),
-                "Old_tel" => $old,
-                "artist" => $artist->serializer(),
-            ]);
-        }
-        return $this->json([]);
-    }
-
-    #[Route('/artist', name: 'artist_delete', methods: 'DELETE')]
-    public function delete(): JsonResponse
-    {
-        $this->entityManager->remove($this->repository->findOneBy(["id" => 1]));
-        $this->entityManager->flush();
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ArtistController.php',
-        ]);
-    }
-
-    #[Route('/artist/all', name: 'artist_get_all', methods: 'GET')]
-    public function readAll(): JsonResponse
-    {
-        $result = [];
-
-        try {
-            if (count($artists = $this->repository->findAll()) > 0)
-                foreach ($artists as $artist) {
-                    array_push($result, $artist->serializer());
-                }
-            return new JsonResponse([
-                'data' => $result,
-                'message' => 'Successful'
-            ], 400);
-        } catch (\Exception $exception) {
-            return new JsonResponse([
-                'message' => $exception->getMessage()
-            ], 404);
-        }
-    }
-
+    // Route création artiste 
     #[Route('/artist', name: 'artist_post', methods: 'POST')]
     public function artist_post(Request $request): JsonResponse
     {
@@ -188,6 +138,7 @@ class artistController extends AbstractController
         ], 201);
     }
 
+    // Route de récupération toutes les infos des artistes
     #[Route('/artist', name: 'artist_get', methods: 'GET')]
     public function artist_get(Request $request): JsonResponse
     {
@@ -246,6 +197,7 @@ class artistController extends AbstractController
         }
     }
 
+    // Route de récupération toutes les infos d'un artiste
     #[Route('/artist/{fullname}', name: 'artist_get_info', methods: ['GET'])]
     public function artist_get_info(?string $fullname = null, Request $request): JsonResponse
     {
@@ -278,6 +230,9 @@ class artistController extends AbstractController
         ]);
     }
 
+    // Route de mise à jour de compte artist
+
+    // Route de désactivation du compte artist
     #[Route('/artist', name: 'artist_delete', methods: 'DELETE')]
     public function artist_delete(Request $request): JsonResponse
     {

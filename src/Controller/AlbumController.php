@@ -30,113 +30,66 @@ class albumController extends AbstractController
         $this->repository = $entityManager->getRepository(User::class);
     }
 
-
-    #[Route('/artist', name: 'artist_post', methods: 'POST')]
-    public function createArtist(Request $request): JsonResponse
+    // Route de récupération des albums
+    #[Route('/albums', name: 'albums_get_all', methods: 'GET')]
+    public function albums_get_all(Request $request): JsonResponse
     {
-
-        $artist = new Artist();
         return $this->json([
-            'artist' => $artist->serializer(),
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ArtistController.php',
-        ]);
+            'who' => 'Ici c\'est get /albums ',
+            'error' => false,
+        ], 200);
     }
 
-    #[Route('/albums', name: 'albums_get', methods: 'GET')]
-    public function create(Request $request): JsonResponse
+    // Route de récupération d'un album
+    #[Route('/album/{id}', name: 'album_get', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function album_get(Request $request, $id): JsonResponse
     {
-
-        $album = new Album();
-        $album->setName("The Weeknd");
-        $album->setCategory("Pop");
-        $album->setCover("My Dear Melancholy");
-        $album->setYear(new DateTimeImmutable());
-        $album->setArtistUserIdUser($artist);
-        $album->setIdAlbum($user);
-        $this->entityManager->persist($album);
-        $this->entityManager->flush();
-
         return $this->json([
-            'album' => $album->serializer(),
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/AlbumController.php',
-        ]);
-
-
-        $data = $request->request->all();
-
-        return new JsonResponse(['succes' => 'true', 'message' => 'Succes', 'album_id' => '']);
+            'who' => 'Ici c\'est get /album/{id} ',
+            'error' => false,
+        ], 200);
+    }
+    
+    // Route de recherche d'albums
+    #[Route('/album/search', name: 'album_search', methods: ['GET'])]
+    public function album_search(Request $request): JsonResponse
+    {
+        return $this->json([
+            'who' => 'Ici c\'est get /album/search ',
+            'error' => false,
+        ], 200);
     }
 
-
-    #[Route('/albums', name: 'albums_get', methods: 'GET')]
-    public function getAlbums(Request $request): JsonResponse
+    // Route de création d'un album
+    #[Route('/album', name: 'album_post', methods: 'POST')]
+    public function album_post(Request $request): JsonResponse
     {
-        // Vérifier si l'utilisateur est authentifié
-        if (!$this->isAuthenticated()) {
-            return $this->exceptionManager->noAuthentication();
-        }
-
-        // Récupérer les paramètres de pagination
-        $page = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 5);
-
-        // Vérifier la pagination
-        if ($page <= 1 || $limit <= 5) {
-            return $this->exceptionManager->invalidPaginationValue();
-        }
-
-        // Récupérer les albums depuis la base de données ou tout autre source de données
-        $albums = $this->getAlbumsFromDatabase($page, $limit);
-
-        // Vérifier si des albums ont été trouvés
-        if (empty($albums)) {
-            return $this->exceptionManager->albumNotFound();
-        }
-
-        // Formatter les données des albums
-        $formattedAlbums = $this->formatAlbums($albums);
-
-        return new JsonResponse($formattedAlbums);
+        return $this->json([
+            'who' => 'Ici c\'est post /album ',
+            'error' => false,
+            'message' => 'Album créé avec succès.'
+        ], 200);
     }
 
-    // Méthode factice pour vérifier si l'utilisateur est authentifié
-    private function isAuthenticated(): bool
+    // Route de modification d'un album
+    #[Route('/album/{id}', name: 'album_put', methods: 'PUT')]
+    public function album_put(Request $request, $id): JsonResponse
     {
-        // Implémentez votre logique d'authentification ici
-        // Par exemple, vérifiez si l'utilisateur est connecté
-        // Retourne true si authentifié, sinon false
-        return true;
+        return $this->json([
+            'who' => 'Ici c\'est put /album/{id} ',
+            'error' => false,
+            'message' => 'Album mis à jour avec succès.'
+        ], 200);
     }
 
-    // Méthode factice pour récupérer les albums depuis la base de données
-    private function getAlbumsFromDatabase(int $page, int $limit): array
+    // Route d'ajout de song
+    #[Route('/album/{id}/song', name: 'album_post_song', methods: 'POST')]
+    public function album_post_song(Request $request): JsonResponse
     {
-        // Implémentez la logique pour récupérer les albums depuis la base de données
-        // Utilisez $page et $limit pour la pagination
-        // Retourne un tableau d'albums
-        return [
-            ['id' => 1, 'title' => 'Album 1', 'artist' => 'Artist 1'],
-            ['id' => 2, 'title' => 'Album 2', 'artist' => 'Artist 2'],
-        ];
-    }
-
-    // Méthode pour formatter les données des albums selon les spécifications
-    private function formatAlbums(array $albums): array
-    {
-        // Implémentez la logique pour formatter les données des albums
-        // selon les spécifications demandées
-        $formattedAlbums = [];
-        foreach ($albums as $album) {
-            // Formattez chaque album selon vos besoins
-            $formattedAlbums[] = [
-                'id' => $album['id'],
-                'title' => $album['title'],
-                'artist' => $album['artist'],
-                // Ajoutez d'autres données si nécessaire
-            ];
-        }
-        return $formattedAlbums;
+        return $this->json([
+            'who' => 'Ici c\'est post /album/{id}/song ',
+            'error' => false,
+            'message' => 'Album mis à jour avec succès.'
+        ], 200);
     }
 }
