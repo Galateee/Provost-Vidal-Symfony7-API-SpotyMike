@@ -127,7 +127,6 @@ class registerController extends AbstractController
           }
 
           // Si tout est bon, register réussie
-          $user->setIdUser("User_" . uniqid());
           $user->setFirstname($data['firstname']);
           $user->setLastname($data['lastname']);
           $user->setEmail($data['email']);

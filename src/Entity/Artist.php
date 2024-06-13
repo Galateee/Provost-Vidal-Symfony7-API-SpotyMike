@@ -18,7 +18,7 @@ class Artist
 
     #[ORM\OneToOne(inversedBy: 'artist', cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $User_idUser = null;
+    private ?User $user = null;
 
     #[ORM\Column(length: 55)]
     private ?string $fullname = null;
@@ -60,14 +60,14 @@ class Artist
         return $this->id;
     }
 
-    public function getUserIdUser(): ?User
+    public function getUser(): ?User
     {
-        return $this->User_idUser;
+        return $this->user;
     }
 
-    public function setUserIdUser(User $User_idUser): static
+    public function setUser(User $user): static
     {
-        $this->User_idUser = $User_idUser;
+        $this->user = $user;
 
         return $this;
     }
@@ -171,7 +171,7 @@ class Artist
     {
         if (!$this->albums->contains($album)) {
             $this->albums->add($album);
-            $album->setArtistUserIdUser($this);
+            $album->setArtist($this);
         }
 
         return $this;
@@ -181,8 +181,8 @@ class Artist
     {
         if ($this->albums->removeElement($album)) {
             // set the owning side to null (unless already changed)
-            if ($album->getArtistUserIdUser() === $this) {
-                $album->setArtistUserIdUser(null);
+            if ($album->getArtist() === $this) {
+                $album->setArtist(null);
             }
         }
 
@@ -193,7 +193,7 @@ class Artist
     {
         return [
             "id" => $this->getId(),
-            "idUser" => ($children) ? $this->getUserIdUser() : null,
+            "idUser" => ($children) ? $this->getUser() : null,
             "fullname" => $this->getfullname(),
             "label" => $this->getLabel(),
             "description" => $this->getDescription(),
@@ -205,12 +205,12 @@ class Artist
     {
         return [
 
-            "firstname" => $this->getUserIdUser()->getFirstName(),
-            "lastname" => $this->getUserIdUser()->getLastName(),
+            "firstname" => $this->getUser()->getFirstName(),
+            "lastname" => $this->getUser()->getLastName(),
             "fullname" => $this->getFullName(),
             "avatar" => [],
-            "sexe" => $this->getUserIdUser()->getSexe(),
-            "dateBirth" => $this->getUserIdUser()->getDateBirth()->format('c'),
+            "sexe" => $this->getUser()->getSexe(),
+            "dateBirth" => $this->getUser()->getDateBirth()->format('c'),
             "artist.createdAt" => $this->getArtistCreateAt()->format('c'),
             "albums" => $this->getAlbums(),
 

@@ -110,12 +110,12 @@ class artistController extends AbstractController
                 if (!file_exists($chemin)) {
                     mkdir($chemin);
                 }
-                file_put_contents($chemin . '/file.png', $file);
+                file_put_contents($chemin . '/avatar.png', $file);
             }
         }
 
         $artist = new Artist;
-        $artist->setUserIdUser($user);
+        $artist->setUser($user);
         $artist->setFullname($data["fullname"]);
         $artist->setLabel($data["label"]);
         if (!empty($data['description'])) {
@@ -134,7 +134,7 @@ class artistController extends AbstractController
         return $this->json([
             'success' => true,
             'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !',
-            'artist_id' => $user->getIdUser(),
+            'artist_id' => $user->getId(),
         ], 201);
     }
 
@@ -142,7 +142,6 @@ class artistController extends AbstractController
     #[Route('/artist', name: 'artist_get', methods: 'GET')]
     public function artist_get(Request $request): JsonResponse
     {
-        // récuperer tout les data recu
         $rawContent = $request->getContent();
         parse_str($rawContent, $data);
 
@@ -242,7 +241,7 @@ class artistController extends AbstractController
         if (gettype($dataMiddellware) == 'boolean') {
             return $this->exceptionManager->noAuthenticationDeleteArtist();
         }
-        
+
         $artist = $dataMiddellware->getArtist();
 
         // Artiste non trouvé

@@ -18,10 +18,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    // #[ORM\Id]
-    #[ORM\Column(length: 90, unique: true)]
-    private ?string $idUser = null;
-
     #[ORM\Column(length: 55)]
     private ?string $firstname = null;
 
@@ -77,18 +73,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdUser(): ?string
-    {
-        return $this->idUser;
-    }
-
-    public function setIdUser(string $idUser): static
-    {
-        $this->idUser = $idUser;
-
-        return $this;
     }
 
     public function getFirstname(): ?string
@@ -244,8 +228,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setArtist(Artist $artist): static
     {
         // set the owning side of the relation if necessary
-        if ($artist->getUserIdUser() !== $this) {
-            $artist->setUserIdUser($this);
+        if ($artist->getUser() !== $this) {
+            $artist->setUser($this);
         }
 
         $this->artist = $artist;
@@ -272,7 +256,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return [
             "id" => $this->getId(),
-            "idUser" => $this->getIdUser(),
             "firstname" => $this->getFirstname(),
             "lastname" => $this->getLastname(),
             "sexe" => $this->getSexe(),
