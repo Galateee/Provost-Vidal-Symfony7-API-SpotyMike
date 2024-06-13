@@ -205,7 +205,7 @@ class ExceptionManager
 
     public function invalidLabelFormatCreateArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => true,'message' => 'Le format du label est invalide.'], 400);
+        return new JsonResponse(['error' => true,'message' => 'Le format de l\'id du label est invalide.'], 400);
     }
 
     public function noAuthenticationCreateArtist(): JsonResponse
@@ -333,7 +333,7 @@ class ExceptionManager
 
     public function isDeleteArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => true,'message' => 'Compte artiste est déjà désactivé.'], 410);
+        return new JsonResponse(['error' => true,'message' => 'Ce compte artiste est déjà désactivé.'], 410);
     }
 
 

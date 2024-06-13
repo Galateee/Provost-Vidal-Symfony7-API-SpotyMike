@@ -89,14 +89,14 @@ class artistController extends AbstractController
 
         // Donnée obligatoires manquantes 
         if (
-            !isset($data['label'])  ||
-            !isset($data['fullname'])
+            !isset($data['label']) || $data['label'] == "" ||
+            !isset($data['fullname']) || $data['fullname'] == ""
         ) {
             return $this->exceptionManager->noDataCreateArtist();
         }
 
         // Format du fullname invalide
-        if (!preg_match('/^[a-zA-ZÀ-ÿ\-]{2,30}$/', $data['fullname'])) {
+        if (!preg_match('/^[\w\W]{2,30}$/', $data['fullname'])) {
             return $this->exceptionManager->invalidFullnameFormatCreateArtist();
         }
 
@@ -108,7 +108,7 @@ class artistController extends AbstractController
         // Non authentifié
         $dataMiddellware = $this->tokenVerifier->checkToken($request);
         if (gettype($dataMiddellware) == 'boolean') {
-            return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware), 401);
+            return $this->exceptionManager->noAuthenticationCreateArtist();
         }
 
         $user = $dataMiddellware;
@@ -135,8 +135,27 @@ class artistController extends AbstractController
 
             $explodeData = explode(",", $data['avatar']);
             if (count($explodeData) == 2) {
+                $file = base64_decode($explodeData[1], true);
 
-                $file = base64_decode($data['avatar']);
+                // Erreur de décodage
+                if ($file === false) {
+                    return $this->exceptionManager->decodageCreateArtist();
+                }
+
+                // Format de fichier non pris en charge 
+                $mimeType = explode(';', explode(':', $explodeData[0])[1])[0];
+                if (!in_array($mimeType, ['image/jpeg', 'image/png'])) {
+                    return $this->exceptionManager->errorFormatFileCreateArtist();
+                }
+
+                // Taille du fichier trop/pas assez volumineux 
+                $fileSize = strlen($file);
+                $minSize = 1 * 1024 * 1024 / 8; // 1 MB
+                $maxSize = 7 * 1024 * 1024 / 8; // 7 MB
+                if ($fileSize < $minSize || $fileSize > $maxSize) {
+                    return $this->exceptionManager->sizeFileCreateArtist();
+                }
+
                 $chemin = $this->getParameter('upload_directory') . '/' . $user->getEmail();
                 if (!file_exists($chemin)) {
                     mkdir($chemin);
@@ -145,27 +164,23 @@ class artistController extends AbstractController
             }
         }
 
-        // Erreur de décodage
-
-        // Format de fichier non pris en charge 
-
-        // Taille du fichier trop/pas assez volumineux 
-
-
         $artist = new Artist;
-        $artist->setLabel($data["label"]);
+        $artist->setUserIdUser($user);
         $artist->setFullname($data["fullname"]);
+        $artist->setLabel($data["label"]);
         if (!empty($data['description'])) {
             $artist->setDescription($data["description"]);
         }
-        $artist->setUserIdUser($user);
-        $artist->setDescription($data["description"]);
+        //$artist->setDescription($data["description"]);
+        $artist->setArtistCreateAt(new \DateTimeImmutable());
 
         $this->entityManager->persist($artist);
         $this->entityManager->flush();
 
+        $user->setArtist($artist);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
-        // pas oublié de gérer l'envoie de artist_id
         return $this->json([
             'success' => true,
             'message' => 'Votre compte d\'artiste a été créé avec succès. Bienvenue dans notre communauté d\'artistes !',
@@ -181,19 +196,19 @@ class artistController extends AbstractController
         parse_str($rawContent, $data);
 
         // Paramètre de pagination invalide 
-        if (!is_numeric($data['currentPage']) || $data['currentPage'] <= 0) {
+        if (!isset($data['currentPage']) || !is_numeric($data['currentPage']) || $data['currentPage'] <= 0) {
             return $this->exceptionManager->invalidPaginationValueGetArtist();
         }
 
         // Non authentifié
         $dataMiddellware = $this->tokenVerifier->checkToken($request);
         if (gettype($dataMiddellware) == 'boolean') {
-            return $this->json($this->tokenVerifier->sendJsonErrorToken($dataMiddellware), 401);
+            return $this->exceptionManager->noAuthenticationGetArtist();
         }
 
         // Aucun artiste trouvé
         $currentPage = $data['currentPage'];
-        $artistsPerPage = 5;
+        $artistsPerPage = isset($data['limit']) && is_numeric($data['limit']) ? (int)$data['limit'] : 5;
 
         $offset = ($currentPage - 1) * $artistsPerPage;
 
@@ -232,19 +247,23 @@ class artistController extends AbstractController
     }
 
     #[Route('/artist/{fullname}', name: 'artist_get_info', methods: ['GET'])]
-    public function getInfo(string $fullname): JsonResponse
+    public function artist_get_info(?string $fullname = null, Request $request): JsonResponse
     {
-        // Nom d'artiste non fourni
-        if (empty($fullname)) {
+        // Vérifier si le fullname est vide ou non fourni
+        if ($fullname === null || trim($fullname) === '') {
             return $this->exceptionManager->missingArtistNameArtistFullname();
         }
 
         // Format du nom d'artiste invalide
-        if (!preg_match("/^[a-zA-Z\s]+$/", $fullname)) {
+        if (!preg_match('/^[\w\W]{2,30}$/', $fullname)) {
             return $this->exceptionManager->invalidArtistNameFormatArtistFullname();
         }
 
-        // Non authentifié A FAIRE
+        // Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationArtistFullname();
+        }
 
         // Artiste non trouvé
         $artist = $this->repository->findOneBy(['fullname' => $fullname]);
@@ -257,5 +276,37 @@ class artistController extends AbstractController
             'artist' => $artist->serializer(),
             'message' => 'Artist information retrieved successfully.',
         ]);
+    }
+
+    #[Route('/artist', name: 'artist_delete', methods: 'DELETE')]
+    public function artist_delete(Request $request): JsonResponse
+    {
+
+        //Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationDeleteArtist();
+        }
+        
+        $artist = $dataMiddellware->getArtist();
+
+        // Artiste non trouvé
+        if ($artist == null) {
+            return $this->exceptionManager->nameUsedDeleteArtist();
+        }
+
+        //Compte déjà désactivé
+        if ($artist->getArtistIsActive() == false) {
+            return $this->exceptionManager->isDeleteArtist();
+        } else {
+            $artist->setArtistIsActive(false);
+            $this->entityManager->persist($artist);
+            $this->entityManager->flush();
+        }
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Le compte artiste a été désactivé avec succès.'
+        ], 200);
     }
 }

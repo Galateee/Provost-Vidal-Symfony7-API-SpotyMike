@@ -29,6 +29,12 @@ class Artist
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createAt = null;
+
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $isActive = true;
+
     #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'Artist_idUser')]
     private Collection $songs;
 
@@ -102,6 +108,30 @@ class Artist
         return $this;
     }
 
+    public function getArtistCreateAt(): ?\DateTimeImmutable
+    {
+        return $this->createAt;
+    }
+
+    public function setArtistCreateAt(\DateTimeImmutable $createAt): static
+    {
+        $this->createAt = $createAt;
+
+        return $this;
+    }
+
+    public function getArtistIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setArtistIsActive(?bool $isActive): static
+    {
+        $this->isActive =  $isActive;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Song>
      */
@@ -171,16 +201,17 @@ class Artist
         ];
     }
 
-    public function serializerGetAll($children = false)
+    public function serializerGetAll()
     {
         return [
 
             "firstname" => $this->getUserIdUser()->getFirstName(),
             "lastname" => $this->getUserIdUser()->getLastName(),
             "fullname" => $this->getFullName(),
+            "avatar" => [],
             "sexe" => $this->getUserIdUser()->getSexe(),
-            "dateBirth" => $this->getUserIdUser()->getDateBirth(),
-            //"artist.createdAt" => $this->getUserIdUser()->getArtistCreatedAt(),
+            "dateBirth" => $this->getUserIdUser()->getDateBirth()->format('c'),
+            "artist.createdAt" => $this->getArtistCreateAt()->format('c'),
             "albums" => $this->getAlbums(),
 
         ];
