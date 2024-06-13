@@ -333,7 +333,7 @@ class ExceptionManager
 
     public function isDeleteArtist(): JsonResponse
     {
-        return new JsonResponse(['error' => true,'message' => 'Compte artiste est déjà désactivé.'], 410);
+        return new JsonResponse(['error' => true,'message' => 'Ce compte artiste est déjà désactivé.'], 410);
     }
 
 

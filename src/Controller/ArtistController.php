@@ -253,12 +253,12 @@ class artistController extends AbstractController
         if ($fullname === null || trim($fullname) === '') {
             return $this->exceptionManager->missingArtistNameArtistFullname();
         }
-    
+
         // Format du nom d'artiste invalide
         if (!preg_match('/^[\w\W]{2,30}$/', $fullname)) {
             return $this->exceptionManager->invalidArtistNameFormatArtistFullname();
         }
-    
+
         // Non authentifié
         $dataMiddellware = $this->tokenVerifier->checkToken($request);
         if (gettype($dataMiddellware) == 'boolean') {
@@ -270,11 +270,43 @@ class artistController extends AbstractController
         if (!$artist) {
             return $this->exceptionManager->artistNotFoundArtistFullname();
         }
-    
+
         // Succès
         return $this->json([
             'artist' => $artist->serializer(),
             'message' => 'Artist information retrieved successfully.',
         ]);
-    }    
+    }
+
+    #[Route('/artist', name: 'artist_delete', methods: 'DELETE')]
+    public function artist_delete(Request $request): JsonResponse
+    {
+
+        //Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationDeleteArtist();
+        }
+        
+        $artist = $dataMiddellware->getArtist();
+
+        // Artiste non trouvé
+        if ($artist == null) {
+            return $this->exceptionManager->nameUsedDeleteArtist();
+        }
+
+        //Compte déjà désactivé
+        if ($artist->getArtistIsActive() == false) {
+            return $this->exceptionManager->isDeleteArtist();
+        } else {
+            $artist->setArtistIsActive(false);
+            $this->entityManager->persist($artist);
+            $this->entityManager->flush();
+        }
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Le compte artiste a été désactivé avec succès.'
+        ], 200);
+    }
 }

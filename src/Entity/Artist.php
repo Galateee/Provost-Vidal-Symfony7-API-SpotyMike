@@ -32,6 +32,9 @@ class Artist
     #[ORM\Column]
     private ?\DateTimeImmutable $createAt = null;
 
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $isActive = true;
+
     #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'Artist_idUser')]
     private Collection $songs;
 
@@ -113,6 +116,18 @@ class Artist
     public function setArtistCreateAt(\DateTimeImmutable $createAt): static
     {
         $this->createAt = $createAt;
+
+        return $this;
+    }
+
+    public function getArtistIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setArtistIsActive(?bool $isActive): static
+    {
+        $this->isActive =  $isActive;
 
         return $this;
     }
