@@ -19,7 +19,6 @@ use App\Service\ExceptionManager;
 
 class albumController extends AbstractController
 {
-
     private $exceptionManager;
     private $repositoryArtist;
     private $repositoryAlbum;
