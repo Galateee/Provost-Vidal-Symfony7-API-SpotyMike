@@ -123,9 +123,60 @@ class albumController extends AbstractController
     #[Route('/album/search', name: 'album_search', methods: ['GET'])]
     public function album_search(Request $request): JsonResponse
     {
+        $rawContent = $request->getContent();
+        parse_str($rawContent, $data);
+
+        // Paramètre de pagination invalide 
+        if (!isset($data['currentPage']) || !is_numeric($data['currentPage']) || $data['currentPage'] <= 0) {
+            return $this->exceptionManager->invalidPaginationValueSearch();
+        }
+
+        // Paramètres invalides
+        $allowedKeys = ['currentPage', 'title', 'fullname', 'label', 'year', 'featuring', 'categorie', 'limit'];
+        $providedKeys = array_keys($data);
+        if (array_diff($providedKeys, $allowedKeys)) {
+            return $this->exceptionManager->invalidParameterSearch();
+        } else if (
+            !isset($data['currentPage']) || $data['currentPage'] == "" ||
+            !isset($data['title']) || $data['title'] == "" ||
+            !isset($data['fullname']) || $data['fullname'] == ""
+        ) {
+            return $this->exceptionManager->invalidParameterSearch();
+        }
+
+        // Catégorie invalide
+        $providedCategories = json_decode($data['categorie'], true);
+        if (!is_array($providedCategories)) {
+            return $this->exceptionManager->invalidCategorySearch();
+        }
+        $allowedCategories = ['rap', 'r\'n\'b', 'gospel', 'soul', 'country', 'hip hop', 'jazz', 'mike'];
+        foreach ($providedCategories as $categorie) {
+            if (!in_array($categorie, $allowedCategories, true)) {
+                return $this->exceptionManager->invalidCategorySearch();
+            }
+        }
+
+        // Featuring invalide 
+
+        // Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationSearch();
+        }
+
+        // Aucun album trouvé 
+        // A REVOIR
+        $album = $this->repositoryAlbum->findOneBy(['title' => $data['title']]);
+        if (!$album) {
+            return $this->exceptionManager->albumNotFoundSearch();
+        }
+
+        // Année invalide 
+
+
         return $this->json([
-            'who' => 'Ici c\'est get /album/search ',
             'error' => false,
+            'albums' => $album->serializer(),
         ], 200);
     }
 

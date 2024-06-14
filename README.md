@@ -12,12 +12,12 @@
 ! 10: Route de récupération de toutes les infos d'un artiste GET /artist/{fullname} -> manque succes  
 - 11: Route de mise à jour de compte artist POST /artist -> pas fait  
 + 12: Route de désactivation du compte artist DELETE /artist -> FINI  
-! 13: Route de récupération des albums -> manque succes  
-! 14: Route de récupération d'un album -> manque succes
-- 15: Route de recherche d'albums -> pas fait  
-! 16: Route de création d'un album -> manque accès refusé  
-- 17: Route de modification d'un album -> pas fait  
-- 18: Route d'ajout de song -> pas fait  
+! 13: Route de récupération des albums GET /albums -> manque succes  
+! 14: Route de récupération d'un album GET /album/{id} -> manque succes  
+! 15: Route de recherche d'albums GET /album/search -> manque Featuring invalide, Année invalide & success  
+! 16: Route de création d'un album POST /album -> manque accès refusé  
+- 17: Route de modification d'un album PUT /album/{id} -> pas fait  
+- 18: Route d'ajout de song POST /album/{id}/song  -> pas fait  
 ```
 Questions:  
 Est ce que le /user doit créer un utilisateur?  / Qu'est ce que /user est censé faire?  
