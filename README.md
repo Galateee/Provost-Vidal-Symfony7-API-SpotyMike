@@ -12,7 +12,7 @@
 ! 10: Route de récupération de toutes les infos d'un artiste GET /artist/{fullname} -> manque succes
 - 11: Route de mise à jour de compte artist POST /artist -> pas fait  
 + 12: Route de désactivation du compte artist DELETE /artist -> FINI  
-- 13: Route de récupération des albums -> pas fait  
+! 13: Route de récupération des albums -> manque succes
 - 14: Route de récupération d'un album -> pas fait  
 - 15: Route de recherche d'albums -> pas fait  
 ! 16: Route de création d'un album -> manque accès refusé  
@@ -24,4 +24,4 @@ Est ce que le /user doit créer un utilisateur?  / Qu'est ce que /user est cens�
 Il y a 2 route /artist, une pour la création et l'autre pour la mise à jour comment faire?  
 
 fix:
-problème au niveau de l'architecture de la relation user artist -> la table user_artist n'est pas utiliser ou ne fonctionne pas raison ??? + impossible de trouver une solution
+- probleme avec les serializer / Les succes

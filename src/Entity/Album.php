@@ -123,9 +123,11 @@ class Album
             "id"=>$this->getId(),
             "title"=>$this->getTitle(),
             "categorie"=>$this->getCategorie(),
-            "createAt"=> $this->getAlbumCreateAt(),
-            "songs"=>[],
-            "artist"=>[]
+            "cover" => [],
+            //"year"=>$this->getYear(),
+            "createAt"=> $this->getAlbumCreateAt()->format('c'),
+            "songs"=> $this->getSongIdSong(), // ->serializer(),
+            "artist"=> $this->getArtistUserIdUser()->serializerGetAllAlbums(),
         ]);
     }
 

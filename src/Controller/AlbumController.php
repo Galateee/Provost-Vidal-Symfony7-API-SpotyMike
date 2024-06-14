@@ -73,7 +73,7 @@ class albumController extends AbstractController
         try {
             if (count($albums = $this->repositoryAlbum->findAll()) > 0)
                 foreach ($albums as $album) {
-                    array_push($result, $album->serializerGetAll());
+                    array_push($result, $album->serializer());
                 }
 
                 return new JsonResponse([
