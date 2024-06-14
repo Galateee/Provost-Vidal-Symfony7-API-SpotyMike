@@ -147,7 +147,7 @@ class Artist
             "sexe" => $this->getUserIdUser()->getSexe(),
             "dateBirth" => $this->getUserIdUser()->getDateBirth()->format('c'),
             "Artist.createdAt" => $this->getArtistCreateAt()->format('c'),
-            "albums" => $this->getAlbums(),
+            "albums" => $children ? $this->getAlbums() : [],
         ];
     }
 

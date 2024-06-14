@@ -8,12 +8,12 @@
 + 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> FINI  
 + 7: Route de suppression du compte DELETE /account-deactivation -> FINI  
 + 8: Route création artist POST /artist -> FINI  
-! 9: Route de récupération de toutes les infos des artistes GET /artist -> manque success -> avatar
-! 10: Route de récupération de toutes les infos d'un artiste GET /artist/{fullname} -> manque succes
+! 9: Route de récupération de toutes les infos des artistes GET /artist -> manque success -> avatar  
+! 10: Route de récupération de toutes les infos d'un artiste GET /artist/{fullname} -> manque succes  
 - 11: Route de mise à jour de compte artist POST /artist -> pas fait  
 + 12: Route de désactivation du compte artist DELETE /artist -> FINI  
-! 13: Route de récupération des albums -> manque succes
-- 14: Route de récupération d'un album -> pas fait  
+! 13: Route de récupération des albums -> manque succes  
+! 14: Route de récupération d'un album -> manque succes
 - 15: Route de recherche d'albums -> pas fait  
 ! 16: Route de création d'un album -> manque accès refusé  
 - 17: Route de modification d'un album -> pas fait  

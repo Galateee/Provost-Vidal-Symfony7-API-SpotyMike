@@ -94,11 +94,28 @@ class albumController extends AbstractController
 
     // Route de récupération d'un album
     #[Route('/album/{id}', name: 'album_get', methods: ['GET'], requirements: ['id' => '\d+'])]
-    public function album_get(Request $request, $id): JsonResponse
+    public function album_get(Request $request, ?int $id): JsonResponse
     {
+        // ID d'album non fourni
+        if ($id === null || trim($id) === '') {
+            return $this->exceptionManager->obligatoryIdAlbumId();
+        }
+
+        // Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationAlbumId();
+        }
+
+        // Album non trouvé
+        $album = $this->repositoryAlbum->findOneBy(['id' => $id]);
+        if (!$album) {
+            return $this->exceptionManager->albumNotFoundAlbumId();
+        }
+
         return $this->json([
-            'who' => 'Ici c\'est get /album/{id} ',
             'error' => false,
+            'album' => $album->serializer(),
         ], 200);
     }
 
