@@ -115,7 +115,7 @@ class artistController extends AbstractController
         }
 
         $artist = new Artist;
-        $artist->setUser($user);
+        $artist->setUserIdUser($user);
         $artist->setFullname($data["fullname"]);
         $artist->setLabel($data["label"]);
         if (!empty($data['description'])) {
@@ -125,10 +125,6 @@ class artistController extends AbstractController
         $artist->setArtistCreateAt(new \DateTimeImmutable());
 
         $this->entityManager->persist($artist);
-        $this->entityManager->flush();
-
-        $user->setArtist($artist);
-        $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         return $this->json([
@@ -177,7 +173,7 @@ class artistController extends AbstractController
         try {
             if (count($artists = $this->repository->findAll()) > 0)
                 foreach ($artists as $artist) {
-                    array_push($result, $artist->serializerGetAll());
+                    array_push($result, $artist->serializerGetAllAlbums());
                 }
             return new JsonResponse([
                 'error' => false,
@@ -224,7 +220,8 @@ class artistController extends AbstractController
 
         // Succès
         return $this->json([
-            'artist' => $artist->serializer(),
+            'error' => false,
+            'artist' => $artist->serializerGetAllAlbums(),
             'message' => 'Artist information retrieved successfully.',
         ]);
     }

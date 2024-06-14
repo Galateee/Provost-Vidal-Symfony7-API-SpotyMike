@@ -20,7 +20,8 @@ class albumController extends AbstractController
 {
 
     private $exceptionManager;
-    private $repository;
+    private $repositoryArtist;
+    private $repositoryAlbum;
     private $entityManager;
     private $tokenVerifier;
 
@@ -29,17 +30,66 @@ class albumController extends AbstractController
         $this->exceptionManager = $exceptionManager;
         $this->entityManager = $entityManager;
         $this->tokenVerifier = $tokenVerifier;
-        $this->repository = $entityManager->getRepository(Album::class);
+        $this->repositoryArtist = $entityManager->getRepository(Artist::class);
+        $this->repositoryAlbum = $entityManager->getRepository(Album::class);
     }
 
     // Route de récupération des albums
     #[Route('/albums', name: 'albums_get_all', methods: 'GET')]
     public function albums_get_all(Request $request): JsonResponse
     {
-        return $this->json([
-            'who' => 'Ici c\'est get /albums ',
-            'error' => false,
-        ], 200);
+        $rawContent = $request->getContent();
+        parse_str($rawContent, $data);
+
+        // Paramètre de pagination invalide 
+        if (!isset($data['currentPage']) || !is_numeric($data['currentPage']) || $data['currentPage'] <= 0) {
+            return $this->exceptionManager->invalidPaginationValueGetAlbums();
+        }
+
+        // Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationGetAlbums();
+        }
+
+        // Aucun album trouvé
+        $currentPage = $data['currentPage'];
+        $albumsPerPage = isset($data['limit']) && is_numeric($data['limit']) ? (int)$data['limit'] : 5;
+
+        $offset = ($currentPage - 1) * $albumsPerPage;
+
+        $totalAlbums = $this->repositoryAlbum->count();
+
+        $totalPages = ceil($totalAlbums / $albumsPerPage);
+
+        $albums = $this->repositoryAlbum->findBy([], null, $albumsPerPage, $offset);
+
+        if (empty($albums)) {
+            return $this->exceptionManager->albumNotFoundGetAlbums();
+        }
+
+        $result = [];
+
+        try {
+            if (count($albums = $this->repositoryAlbum->findAll()) > 0)
+                foreach ($albums as $album) {
+                    array_push($result, $album->serializerGetAll());
+                }
+
+                return new JsonResponse([
+                'error' => false,
+                'albums' => $result,
+                'pagination' => [
+                    'currentPage' => $currentPage,
+                    'totalPages' => $totalPages,
+                    'totalArtists' => $totalAlbums,
+                ],
+            ], 201);
+        } catch (\Exception $exception) {
+            return new JsonResponse([
+                'message' => $exception->getMessage()
+            ], 404);
+        }
     }
 
     // Route de récupération d'un album
@@ -111,7 +161,7 @@ class albumController extends AbstractController
         // Accès refusé / Non autorisé
 
         // Titre d'album déjà utilisé
-        $existingAlbum = $this->repository->findOneBy(['title' => $data['title']]);
+        $existingAlbum = $this->repositoryAlbum->findOneBy(['title' => $data['title']]);
         if ($existingAlbum !== null) {
             return $this->exceptionManager->titleUsePostPutAlbum();
         }
@@ -152,16 +202,17 @@ class albumController extends AbstractController
             }
         }
 
-        $artist = $dataMiddellware->getArtist();
+        $user = $dataMiddellware;
+        $artist = $this->repositoryArtist->findOneBy(['User_idUser'=>$user]);
+
         $album = new album;
 
-        $album->addAlbumArtist($artist);
-
-        $album->setVisibility($data['visibility']);
+        $album->setIdAlbum("Album_".rand(0,999999999999));
         $album->setTitle($data['title']);
         $album->setCategorie($providedCategories);
+        $album->setVisibility($data['visibility']);
         $album->setAlbumCreateAt(new \DateTimeImmutable());
-
+        $album->setArtistUserIdUser($artist);
 
         $this->entityManager->persist($album);
         $this->entityManager->flush();

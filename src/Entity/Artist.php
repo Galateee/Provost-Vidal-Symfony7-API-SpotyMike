@@ -16,9 +16,9 @@ class Artist
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'artist', cascade: ['remove'])]
+    #[ORM\OneToOne(inversedBy: 'artist', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?User $User_idUser = null;
 
     #[ORM\Column(length: 55)]
     private ?string $fullname = null;
@@ -35,20 +35,16 @@ class Artist
     #[ORM\Column(type: Types::BOOLEAN)]
     private ?bool $isActive = true;
 
-    #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'album_artist')]
-    private Collection $artist_album;
+    #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'Artist_idUser')]
+    private Collection $songs;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'user_follow_artist')]
-    private Collection $Artist_isFollow;
-
-    #[ORM\ManyToMany(targetEntity: Label::class, inversedBy: 'Label_forArtist')]
-    private Collection $Artist_Has_Label;
+    #[ORM\OneToMany(targetEntity: Album::class, mappedBy: 'artist_User_idUser')]
+    private Collection $albums;
 
     public function __construct()
     {
-        $this->artist_album = new ArrayCollection();
-        $this->Artist_isFollow = new ArrayCollection();
-        $this->Artist_Has_Label = new ArrayCollection();
+        $this->songs = new ArrayCollection();
+        $this->albums = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -56,14 +52,14 @@ class Artist
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUserIdUser(): ?User
     {
-        return $this->user;
+        return $this->User_idUser;
     }
 
-    public function setUser(?User $user): static
+    public function setUserIdUser(User $User_idUser): static
     {
-        $this->user = $user;
+        $this->User_idUser = $User_idUser;
 
         return $this;
     }
@@ -128,107 +124,86 @@ class Artist
         return $this;
     }
 
-    public function serializer()
+    public function serializer($children = false)
     {
         return [
             "id" => $this->getId(),
-            "user" => $this->getUser() ? $this->getUser()->serializer() : [],
-            "fullname" => $this->getfullname(),
+            "fullname" => $this->getFullname(),
             "label" => $this->getLabel(),
             "description" => $this->getDescription(),
-            "artist.createdAt" => $this->getArtistCreateAt(), //->format('c')
-            "isActive" => $this->getArtistIsActive(),
-            "album" => $this->getArtistAlbum()
+            "album" => $this->getAlbums(),
+            "songs" => $this->getSongs(),
+            "user"=> $children ? $this->getUserIdUser() : []
         ];
     }
 
-    public function serializerGetAll()
+    public function serializerGetAllAlbums($children = false)
     {
         return [
-
-            "firstname" => $this->getUser()->getFirstName(),
-            "lastname" => $this->getUser()->getLastName(),
-            "fullname" => $this->getFullName(),
+            "firstname" => $this->getUserIdUser()->getFirstname(),
+            "lastname" => $this->getUserIdUser()->getLastname(),
+            "fullname" => $this->getFullname(),
             "avatar" => [],
-            "sexe" => $this->getUser()->getSexe(),
-            "dateBirth" => $this->getUser()->getDateBirth()->format('c'),
-            "artist.createdAt" => $this->getArtistCreateAt()->format('c'),
-            "albums" => $this->getArtistAlbum(),
-
+            "sexe" => $this->getUserIdUser()->getSexe(),
+            "dateBirth" => $this->getUserIdUser()->getDateBirth()->format('c'),
+            "Artist.createdAt" => $this->getArtistCreateAt()->format('c'),
+            "albums" => $this->getAlbums(),
         ];
     }
 
-        /**
+    /**
+     * @return Collection<int, Song>
+     */
+    public function getSongs(): Collection
+    {
+        return $this->songs;
+    }
+
+    public function addSong(Song $song): static
+    {
+        if (!$this->songs->contains($song)) {
+            $this->songs->add($song);
+            $song->addArtistIdUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSong(Song $song): static
+    {
+        if ($this->songs->removeElement($song)) {
+            $song->removeArtistIdUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection<int, Album>
      */
-    public function getArtistAlbum(): Collection
+    public function getAlbums(): Collection
     {
-        return $this->artist_album;
+        return $this->albums;
     }
 
-    public function addArtistAlbum(Album $artistAlbum): static
+    public function addAlbum(Album $album): static
     {
-        if (!$this->artist_album->contains($artistAlbum)) {
-            $this->artist_album->add($artistAlbum);
+        if (!$this->albums->contains($album)) {
+            $this->albums->add($album);
+            $album->setArtistUserIdUser($this);
         }
 
         return $this;
     }
 
-    public function removeArtistAlbum(Album $artistAlbum): static
+    public function removeAlbum(Album $album): static
     {
-        $this->artist_album->removeElement($artistAlbum);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getArtistIsFollow(): Collection
-    {
-        return $this->Artist_isFollow;
-    }
-
-    public function addArtistIsFollow(User $artistIsFollow): static
-    {
-        if (!$this->Artist_isFollow->contains($artistIsFollow)) {
-            $this->Artist_isFollow->add($artistIsFollow);
-            $artistIsFollow->addUserFollowArtist($this);
+        if ($this->albums->removeElement($album)) {
+            // set the owning side to null (unless already changed)
+            if ($album->getArtistUserIdUser() === $this) {
+                $album->setArtistUserIdUser(null);
+            }
         }
-
-        return $this;
-    }
-
-    public function removeArtistIsFollow(User $artistIsFollow): static
-    {
-        if ($this->Artist_isFollow->removeElement($artistIsFollow)) {
-            $artistIsFollow->removeUserFollowArtist($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Label>
-     */
-    public function getArtistHasLabel(): Collection
-    {
-        return $this->Artist_Has_Label;
-    }
-
-    public function addArtistHasLabel(Label $artistHasLabel): static
-    {
-        if (!$this->Artist_Has_Label->contains($artistHasLabel)) {
-            $this->Artist_Has_Label->add($artistHasLabel);
-        }
-
-        return $this;
-    }
-
-    public function removeArtistHasLabel(Label $artistHasLabel): static
-    {
-        $this->Artist_Has_Label->removeElement($artistHasLabel);
 
         return $this;
     }

@@ -129,7 +129,7 @@ class loginController extends AbstractController
         return $this->json([
             'error' => false,
             'message' => 'L\'utilisateur a été authentifié avec succès.',
-            'user' => $user->serializerLogin(),
+            'user' => $user->serializer(false, false),
             'token' => $JWTManager->create($user),
         ], 200);
     }

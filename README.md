@@ -4,7 +4,7 @@
 + 2: Route d'authentication d'un utilisateur POST /login -> FINI  
 + 3: Route d'inscription d'un utilisateur POST /register -> FINI  
 + 4: Route de création de compte user POST /user -> FINI  
-! 5: Route de password lost POST /password-lost -> manque la création des token avec expiration de 2 min  
+! 5: Route de password lost POST /password-lost -> manque les token avec expiration de 2 min  
 + 6: Route de réinitialisation de mot de passe GET /reset-password/{token} -> FINI  
 + 7: Route de suppression du compte DELETE /account-deactivation -> FINI  
 + 8: Route création artist POST /artist -> FINI  
