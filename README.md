@@ -22,6 +22,7 @@
 Questions:  
 Est ce que le /user doit créer un utilisateur?  / Qu'est ce que /user est censé faire?  
 Il y a 2 route /artist, une pour la création et l'autre pour la mise à jour comment faire?  => Un if artist exist et mettre la création et la mise à jour sur la même route
+Pas compris la derniere route song... song: envoie un fichier en valeur binaire???
 
 fix:
 - probleme avec les serializer / Les succes
