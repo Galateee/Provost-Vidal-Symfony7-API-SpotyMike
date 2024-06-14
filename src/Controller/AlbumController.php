@@ -202,7 +202,7 @@ class albumController extends AbstractController
 
         // Valeur de visibilité invalide
         if (!in_array($data['visibility'], ['0', '1'])) {
-            return $this->exceptionManager->invalidGenderValueRegisterUser();
+            return $this->exceptionManager->invalidVisibilityPostPutAlbum();
         }
 
         // Erreur de validation
@@ -224,7 +224,6 @@ class albumController extends AbstractController
         if (gettype($dataMiddellware) == 'boolean') {
             return $this->exceptionManager->noAuthenticationPostPutAlbum();
         }
-
 
         // Accès refusé / Non autorisé
 
@@ -295,10 +294,112 @@ class albumController extends AbstractController
 
     // Route de modification d'un album
     #[Route('/album/{id}', name: 'album_put', methods: 'PUT')]
-    public function album_put(Request $request, $id): JsonResponse
+    public function album_put(Request $request,?int $id): JsonResponse
     {
+
+        $data = $request->request->all();
+
+        // Paramètres invalides
+        $allowedKeys = ['visibility', 'cover', 'title', 'categorie'];
+        $providedKeys = array_keys($data);
+        if (array_diff($providedKeys, $allowedKeys)) {
+            return $this->exceptionManager->invalidParameterPostPutAlbum();
+        } else if (
+            !isset($data['visibility']) || $data['visibility'] == "" ||
+            !isset($data['cover']) || $data['cover'] == "" ||
+            !isset($data['title']) || $data['title'] == "" ||
+            !isset($data['categorie']) || $data['categorie'] == ""
+        ) {
+            return $this->exceptionManager->invalidParameterPostPutAlbum();
+        }
+
+        // Valeur de visibilité invalide
+        if (!in_array($data['visibility'], ['0', '1'])) {
+            return $this->exceptionManager->invalidVisibilityPostPutAlbum();
+        }
+
+        // Erreur de validation
+        $providedCategories = json_decode($data['categorie'], true);
+        if (!is_array($providedCategories) || !preg_match("/^[\w\W]{2,90}$/", $data['title'])) {
+            return $this->exceptionManager->validationDataErrorPostPutAlbum();
+        }
+
+        // Catégorie invalide
+        $allowedCategories = ['rap', 'r\'n\'b', 'gospel', 'soul', 'country', 'hip hop', 'jazz', 'mike'];
+        foreach ($providedCategories as $categorie) {
+            if (!in_array($categorie, $allowedCategories, true)) {
+                return $this->exceptionManager->invalidCategoryPostPutAlbum();
+            }
+        }
+
+        // Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationPostPutAlbum();
+        }
+
+        // Accès refusé / Non autorisé
+
+        // Aucun album trouvé 
+        $album = $this->repositoryAlbum->findOneBy(['id' => $id]);
+        if (!$album) {
+            return $this->exceptionManager->albumNotFoundPutAlbum();
+        }
+
+        // Titre d'album déjà utilisé
+        $existingAlbum = $this->repositoryAlbum->findOneBy(['title' => $data['title']]);
+        if ($existingAlbum !== null) {
+            return $this->exceptionManager->titleUsePostPutAlbum();
+        }
+
+        // base64
+        if (isset($data['cover'])) {
+            $parameters = $request->getContent();
+            parse_str($parameters, $data);
+
+            $explodeData = explode(",", $data['cover']);
+            if (count($explodeData) == 2) {
+                $file = base64_decode($explodeData[1], true);
+
+                // Erreur de décodage
+                if ($file === false) {
+                    return $this->exceptionManager->decodagePostPutAlbum();
+                }
+
+                // Format de fichier non pris en charge 
+                $mimeType = explode(';', explode(':', $explodeData[0])[1])[0];
+                if (!in_array($mimeType, ['image/jpeg', 'image/png'])) {
+                    return $this->exceptionManager->errorFormatFilePostPutAlbum();
+                }
+
+                // Taille du fichier trop/pas assez volumineux 
+                $fileSize = strlen($file);
+                $minSize = 1 * 1024 * 1024 / 8; // 1 MB
+                $maxSize = 7 * 1024 * 1024 / 8; // 7 MB
+                if ($fileSize < $minSize || $fileSize > $maxSize) {
+                    return $this->exceptionManager->sizeFilePostPutAlbum();
+                }
+
+                $chemin = $this->getParameter('upload_directory') . '/' . $dataMiddellware->getEmail();
+                if (!file_exists($chemin)) {
+                    mkdir($chemin);
+                }
+                file_put_contents($chemin . '/cover.png', $file);
+            }
+        }
+
+
+        $album = $this->repositoryAlbum->findOneBy(['id'=>$id]);
+
+        $album->setVisibility($data['visibility']);
+        $album->setCategorie($providedCategories);
+        $album->setTitle($data['title']);
+        $album->setAlbumCreateAt(new \DateTimeImmutable());
+
+        $this->entityManager->persist($album);
+        $this->entityManager->flush();
+
         return $this->json([
-            'who' => 'Ici c\'est put /album/{id} ',
             'error' => false,
             'message' => 'Album mis à jour avec succès.'
         ], 200);
