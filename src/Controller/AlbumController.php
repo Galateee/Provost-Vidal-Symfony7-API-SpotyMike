@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Album;
 use App\Entity\Artist;
+use App\Entity\Song;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -76,7 +77,7 @@ class albumController extends AbstractController
                     array_push($result, $album->serializer());
                 }
 
-                return new JsonResponse([
+            return new JsonResponse([
                 'error' => false,
                 'albums' => $result,
                 'pagination' => [
@@ -226,6 +227,9 @@ class albumController extends AbstractController
         }
 
         // Accès refusé / Non autorisé
+        if ($dataMiddellware->getArtist() == null) {
+            return $this->exceptionManager->noAutorisationPostPutAlbum();
+        }
 
         // Titre d'album déjà utilisé
         $existingAlbum = $this->repositoryAlbum->findOneBy(['title' => $data['title']]);
@@ -270,11 +274,11 @@ class albumController extends AbstractController
         }
 
         $user = $dataMiddellware;
-        $artist = $this->repositoryArtist->findOneBy(['User_idUser'=>$user]);
+        $artist = $this->repositoryArtist->findOneBy(['User_idUser' => $user]);
 
         $album = new album;
 
-        $album->setIdAlbum("Album_".rand(0,999999999999));
+        $album->setIdAlbum("Album_" . rand(0, 999999999999));
         $album->setTitle($data['title']);
         $album->setCategorie($providedCategories);
         $album->setVisibility($data['visibility']);
@@ -294,7 +298,7 @@ class albumController extends AbstractController
 
     // Route de modification d'un album
     #[Route('/album/{id}', name: 'album_put', methods: 'PUT')]
-    public function album_put(Request $request,?int $id): JsonResponse
+    public function album_put(Request $request, ?int $id): JsonResponse
     {
 
         $data = $request->request->all();
@@ -339,6 +343,9 @@ class albumController extends AbstractController
         }
 
         // Accès refusé / Non autorisé
+        if ($dataMiddellware->getArtist() == null) {
+            return $this->exceptionManager->noAutorisationPostPutAlbum();
+        }
 
         // Aucun album trouvé 
         $album = $this->repositoryAlbum->findOneBy(['id' => $id]);
@@ -389,7 +396,7 @@ class albumController extends AbstractController
         }
 
 
-        $album = $this->repositoryAlbum->findOneBy(['id'=>$id]);
+        $album = $this->repositoryAlbum->findOneBy(['id' => $id]);
 
         $album->setVisibility($data['visibility']);
         $album->setCategorie($providedCategories);
@@ -407,12 +414,59 @@ class albumController extends AbstractController
 
     // Route d'ajout de song
     #[Route('/album/{id}/song', name: 'album_post_song', methods: 'POST')]
-    public function album_post_song(Request $request): JsonResponse
+    public function album_post_song(Request $request, ?int $id): JsonResponse
     {
+
+        // Non authentifié
+        $dataMiddellware = $this->tokenVerifier->checkToken($request);
+        if (gettype($dataMiddellware) == 'boolean') {
+            return $this->exceptionManager->noAuthenticationAlbumSong();
+        }
+
+        // Accès refusé / non autorisé 
+        if ($dataMiddellware->getArtist() == null) {
+            return $this->exceptionManager->accessDeniedAlbumSong();
+        }
+
+        // Album non trouvé
+        $album = $this->repositoryAlbum->findOneBy(['id' => $id]);
+        if (!$album) {
+            return $this->exceptionManager->notFoundAlbumSong();
+        }
+
+        $data = $request->files->get('song');
+        
+        // Format de fichier non pris en charge 
+        $mimeType = $_FILES['song']['type'];
+        if ($mimeType !== 'audio/mpeg' && $mimeType !== 'audio/wav') {
+            return $this->exceptionManager->errorFormatFileAlbumSong();
+        }
+
+        // Taille du fichier trop/pas assez volumineux 
+        $fileSize = $_FILES['song']['size'];
+        $minSize = 1 * 1024 * 1024 / 8; // 1 MB
+        $maxSize = 7 * 1024 * 1024 / 8; // 7 MB
+        if ($fileSize < $minSize || $fileSize > $maxSize) {
+            return $this->exceptionManager->sizeFileCreateAlbumSong();
+        }
+
+        $song = new Song();
+        $album->addSongIdSong($song);
+        $song->setIdSong("Song_" . rand(0, 999999999999));
+        $song->setTitle($_FILES['song']['name']);
+
+        $song->setCreateAt(new \DateTimeImmutable());
+
+        $this->entityManager->persist($song);
+        $this->entityManager->flush();
+
+        $this->entityManager->persist($album);
+        $this->entityManager->flush();
+
         return $this->json([
-            'who' => 'Ici c\'est post /album/{id}/song ',
             'error' => false,
-            'message' => 'Album mis à jour avec succès.'
+            'message' => 'Album mis à jour avec succès.',
+            "idSong" => $song->getId(),
         ], 200);
     }
 }
