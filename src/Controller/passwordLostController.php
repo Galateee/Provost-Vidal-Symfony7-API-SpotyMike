@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\ExceptionManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
-class passwordLostController extends AbstractController
+class PasswordLostController extends AbstractController
 {
      private $exceptionManager;
      private $repository;

@@ -87,6 +87,7 @@ class Label
     /**
      * @return Collection<int, Artist>
      */
+    /*
     public function getLabelForArtist(): Collection
     {
         return $this->Label_forArtist;
@@ -110,4 +111,5 @@ class Label
 
         return $this;
     }
+    */
 }

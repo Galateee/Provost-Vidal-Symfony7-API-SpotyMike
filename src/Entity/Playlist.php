@@ -135,6 +135,7 @@ class Playlist
     /**
      * @return Collection<int, User>
      */
+    /*
     public function getPlaylistIsShare(): Collection
     {
         return $this->playlist_isShare;
@@ -158,4 +159,5 @@ class Playlist
 
         return $this;
     }
+    */
 }

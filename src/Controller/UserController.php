@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ExceptionManager;
 
-class userController extends AbstractController
+class UserController extends AbstractController
 {
     private $exceptionManager;
     private $repository;

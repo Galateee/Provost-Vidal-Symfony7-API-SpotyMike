@@ -12,7 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ExceptionManager;
 use DateTime;
 
-class registerController extends AbstractController
+class RegisterController extends AbstractController
 {
 
      private $exceptionManager;
