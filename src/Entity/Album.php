@@ -16,19 +16,19 @@ class Album
     private ?int $id = null;
 
     #[ORM\Column(length: 90)]
-    private ?User $idAlbum = null;
+    private ?string $idAlbum = null;
 
     #[ORM\Column(length: 90)]
-    private ?string $name = null;
+    private ?string $title = null;
 
     #[ORM\Column(length: 20)]
-    private ?string $category = null;
+    private array $categorie = [];
 
-    #[ORM\Column(length: 125)]
-    private ?string $cover = null;
+    #[ORM\Column(length: 1, nullable: false)]
+    private ?int $visibility = 0;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $year = null;
+    private ?\DateTimeImmutable $createAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'albums')]
     private ?Artist $artist_User_idUser = null;
@@ -46,63 +46,62 @@ class Album
         return $this->id;
     }
 
-    public function getIdAlbum(): ?User
+    public function getIdAlbum(): ?string
     {
         return $this->idAlbum;
     }
 
-    public function setIdAlbum(User $idAlbum): static
+    public function setIdAlbum(string $idAlbum): static
     {
         $this->idAlbum = $idAlbum;
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(string $name): static
+    public function setTitle(string $title): static
     {
-        $this->name = $name;
+        $this->title = $title;
 
         return $this;
     }
 
-    public function getCategory(): ?string
+    public function getCategorie(): array
     {
-        return $this->category;
+        return $this->categorie;
     }
 
-    public function setCategory(string $category): static
+    public function setCategorie(array $categorie): static
     {
-        $this->category = $category;
+        $this->categorie = $categorie;
 
         return $this;
     }
 
-    public function getCover(): ?string
+    public function getVisibility(): ?int
     {
-        return $this->cover;
+        return $this->visibility;
     }
 
-    public function setCover(string $cover): static
+    public function setVisibility(?int $visibility): static
     {
-        $this->cover = $cover;
+        $this->visibility =  $visibility;
 
         return $this;
     }
 
-
-    public function getYear(): ?\DateTimeImmutable
+    public function getAlbumCreateAt(): ?\DateTimeImmutable
     {
-        return $this->year;
+        return $this->createAt;
     }
 
-    public function setYear(\DateTimeImmutable $year): static
+    public function setAlbumCreateAt(\DateTimeImmutable $createAt): static
     {
-        $this->year = $year;
+        $this->createAt = $createAt;
 
         return $this;
     }
@@ -119,17 +118,17 @@ class Album
         return $this;
     }
 
-    public function serializer($children = false)
-    {
-        return [
-            "id" => $this->getId(),
-            "idAlbum" => ($children) ? $this->getIdAlbum() : null,
-            "name" => $this->getName(),
-            "category" => $this->getCategory(),
-            "cover" => $this->getCover(),
-            "year" => $this->getYear(),
-            "artistUserIdUser" => $this->getArtistUserIdUser()
-        ];
+    public function serializer($children = false){
+        return ([
+            "id"=>$this->getId(),
+            "title"=>$this->getTitle(),
+            "categorie"=>$this->getCategorie(),
+            "cover" => [],
+            //"year"=>$this->getYear(),
+            "createAt"=> $this->getAlbumCreateAt()->format('c'),
+            "songs"=> $this->getSongIdSong(), // ->serializer(),
+            "artist"=> $this->getArtistUserIdUser()->serializerGetAllAlbums(),
+        ]);
     }
 
     /**

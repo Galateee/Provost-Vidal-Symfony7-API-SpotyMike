@@ -28,51 +28,6 @@ class userController extends AbstractController
         $this->repository = $entityManager->getRepository(User::class);
     }
 
-    #[Route('/user', name: 'user_delete', methods: 'DELETE')]
-    public function delete(): JsonResponse
-    {
-        $this->entityManager->remove($this->repository->findOneBy(["id" => 1]));
-        $this->entityManager->flush();
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/userController.php',
-        ]);
-    }
-
-    #[Route('/user', name: 'user_get', methods: 'GET')]
-    public function read(): JsonResponse
-    {
-
-
-        $serializer = new Serializer([new ObjectNormalizer()]);
-        // $jsonContent = $serializer->serialize($person, 'json');
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/userController.php',
-        ]);
-    }
-
-    #[Route('/user/all', name: 'user_get_all', methods: 'GET')]
-    public function readAll(): JsonResponse
-    {
-        $result = [];
-
-        try {
-            if (count($users = $this->repository->findAll()) > 0)
-                foreach ($users as $user) {
-                    array_push($result, $user->serializer());
-                }
-            return new JsonResponse([
-                'data' => $result,
-                'message' => 'Successful'
-            ], 400);
-        } catch (\Exception $exception) {
-            return new JsonResponse([
-                'message' => $exception->getMessage()
-            ], 404);
-        }
-    }
-
     #[Route('/user', name: 'user_post', methods: ['POST'])]
     public function user_post(Request $request): JsonResponse
     {

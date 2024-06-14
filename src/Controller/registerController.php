@@ -127,7 +127,7 @@ class registerController extends AbstractController
           }
 
           // Si tout est bon, register réussie
-          $user->setIdUser("User_" . uniqid());
+          $user->setIdUser("User_".rand(0,999999999999));
           $user->setFirstname($data['firstname']);
           $user->setLastname($data['lastname']);
           $user->setEmail($data['email']);
@@ -146,7 +146,7 @@ class registerController extends AbstractController
           return $this->json([
                'error' => false,
                'message' => 'L\'utilisateur a bien été créé avec succès.',
-               'user' => $user->serializerRegister(),
+               'user' => $user->serializer(false, true),
           ], 201);
      }
 }

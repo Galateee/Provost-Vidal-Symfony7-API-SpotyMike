@@ -16,19 +16,19 @@ class Song
     private ?int $id = null;
 
     #[ORM\Column(length: 90)]
-    private ?User $idSong = null;
+    private ?string $idSong = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 125)]
+    #[ORM\Column(length: 125, nullable: true)]
     private ?string $url = null;
 
-    #[ORM\Column(length: 125)]
+    #[ORM\Column(length: 125, nullable: true)]
     private ?string $cover = null;
 
-    #[ORM\Column]
-    private ?bool $visibility = true;
+    #[ORM\Column(length: 1, nullable: false)]
+    private ?int $visibility = 0;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createAt = null;
@@ -52,12 +52,12 @@ class Song
         return $this->id;
     }
 
-    public function getIdSong(): ?User
+    public function getIdSong(): ?string
     {
         return $this->idSong;
     }
 
-    public function setIdSong(User $idSong): static
+    public function setIdSong(string $idSong): static
     {
         $this->idSong = $idSong;
 

@@ -28,26 +28,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 55)]
     private ?string $lastname = null;
 
+    #[ORM\Column(length: 80, unique: true)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 90)]
+    private ?string $password = null;
+
+    #[ORM\Column(length: 15, nullable: true)]
+    private ?string $tel = "";
+
     #[ORM\Column(length: 55, nullable: true)]
     private ?string $sexe = null;
 
     #[ORM\Column(length: 55)]
     private ?\DateTimeImmutable $dateBirth = null;
 
-    #[ORM\Column(length: 80, unique: true)]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 15, nullable: true)]
-    private ?string $tel = "";
-
-    #[ORM\Column(length: 90)]
-    private ?string $password = null;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $isActive = true;
 
     #[ORM\Column(length: 1, nullable: true)]
     private ?int $nbTry = 0;
-
-    #[ORM\Column(type: Types::BOOLEAN)]
-    private ?bool $isActive = true;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $lastTryTimestamp = null;
@@ -58,21 +58,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updateAt = null;
 
-
-    #[ORM\OneToOne(mappedBy: 'User_idUser', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'User_idUser', cascade: ['persist'])]
     private ?Artist $artist = null;
-
-    #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'Artist_isFollow')]
-    private Collection $user_follow_artist;
-
-    #[ORM\ManyToMany(targetEntity: Playlist::class, inversedBy: 'playlist_isShare')]
-    private Collection $User_share_Playlist;
-
-    public function __construct()
-    {
-        $this->user_follow_artist = new ArrayCollection();
-        $this->User_share_Playlist = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -115,31 +102,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSexe(): ?string
-    {
-        return $this->sexe;
-    }
-
-    public function setSexe(string $sexe): static
-    {
-        $this->sexe =  $sexe;
-
-        return $this;
-    }
-
-    public function getDateBirth(): ?\DateTimeImmutable
-    {
-        return $this->dateBirth;
-    }
-
-    public function setDateBirth(string $dateBirth): self
-    {
-        $this->dateBirth = new \DateTimeImmutable($dateBirth);
-
-        return $this;
-    }
-
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -164,14 +126,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getNbTry(): ?int
+    public function getTel(): ?string
     {
-        return $this->nbTry;
+        return $this->tel;
     }
 
-    public function setNbTry(?int $nbTry): static
+    public function setTel(?string $tel): static
     {
-        $this->nbTry =  $nbTry;
+        $this->tel = $tel !== null ? $tel : "";
+
+        return $this;
+    }
+
+    public function getSexe(): ?string
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(string $sexe): static
+    {
+        $this->sexe =  $sexe;
+
+        return $this;
+    }
+
+    public function getDateBirth(): ?\DateTimeImmutable
+    {
+        return $this->dateBirth;
+    }
+
+    public function setDateBirth(string $dateBirth): self
+    {
+        $this->dateBirth = new \DateTimeImmutable($dateBirth);
 
         return $this;
     }
@@ -188,14 +174,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTel(): ?string
+    public function getNbTry(): ?int
     {
-        return $this->tel;
+        return $this->nbTry;
     }
 
-    public function setTel(?string $tel): static
+    public function setNbTry(?int $nbTry): static
     {
-        $this->tel = $tel !== null ? $tel : "";
+        $this->nbTry =  $nbTry;
 
         return $this;
     }
@@ -268,99 +254,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->getEmail();
     }
 
-    public function serializer()
-    {
-        return [
-            "id" => $this->getId(),
-            "idUser" => $this->getIdUser(),
-            "firstname" => $this->getFirstname(),
-            "lastname" => $this->getLastname(),
-            "sexe" => $this->getSexe(),
-            "dateBirth" => $this->getDateBirth(),
-            "email" => $this->getEmail(),
-            "tel" => $this->getTel(),
-            'nbTry' => $this->getNbTry(),
-            "isActive" => $this->getIsActive(),
-            "lastTryTimestamp" => $this->getLastTryTimestamp(),
-            "createAt" => $this->getCreateAt(),
-            "updateeAt" => $this->getUpdateAt(),
-            "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [],
-        ];
+public function serializer(bool $children = false, bool $includeUpdateAt = true) {
+    $data = [
+        "firstname" => $this->getFirstname(),
+        "lastname" => $this->getLastname(),
+        "email" => $this->getEmail(),
+        "tel" => $this->getTel(),
+        "sexe" => $this->getSexe(),
+        "artist"=> $children ?  $this->getArtist()->serializer(true) : [],
+        "dateBirth" => $this->getDateBirth(),
+        "createAt" => $this->getCreateAt(),
+    ];
+
+    if ($includeUpdateAt) {
+        $data["updateAt"] = $this->getUpdateAt();
     }
 
-    public function serializerLogin()
-    {
-        return [
-            "firstname" => $this->getFirstname(),
-            "lastname" => $this->getLastname(),
-            "email" => $this->getEmail(),
-            "tel" => $this->getTel(),
-            "sexe" => $this->getSexe(),
-            "artist" => $this->getArtist() ?  $this->getArtist()->serializer() : [], // A REVOIR
-            "dateBirth" => $this->getDateBirth(),
-            "createAt" => $this->getCreateAt(),
-        ];
-    }
+    return $data;
+}
 
-    public function serializerRegister()
-    {
-        return [
-            "firstname" => $this->getFirstname(),
-            "lastname" => $this->getLastname(),
-            "email" => $this->getEmail(),
-            "tel" => $this->getTel(),
-            "sexe" => $this->getSexe(),
-            "dateBirth" => $this->getDateBirth(),
-            "createAt" => $this->getCreateAt(),
-            "updateeAt" => $this->getUpdateAt(),
-        ];
-    }
 
-    /**
-     * @return Collection<int, Artist>
-     */
-    public function getUserFollowArtist(): Collection
-    {
-        return $this->user_follow_artist;
-    }
 
-    public function addUserFollowArtist(Artist $userFollowArtist): static
-    {
-        if (!$this->user_follow_artist->contains($userFollowArtist)) {
-            $this->user_follow_artist->add($userFollowArtist);
-        }
-
-        return $this;
-    }
-
-    public function removeUserFollowArtist(Artist $userFollowArtist): static
-    {
-        $this->user_follow_artist->removeElement($userFollowArtist);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Playlist>
-     */
-    public function getUserSharePlaylist(): Collection
-    {
-        return $this->User_share_Playlist;
-    }
-
-    public function addUserSharePlaylist(Playlist $userSharePlaylist): static
-    {
-        if (!$this->User_share_Playlist->contains($userSharePlaylist)) {
-            $this->User_share_Playlist->add($userSharePlaylist);
-        }
-
-        return $this;
-    }
-
-    public function removeUserSharePlaylist(Playlist $userSharePlaylist): static
-    {
-        $this->User_share_Playlist->removeElement($userSharePlaylist);
-
-        return $this;
-    }
 }
