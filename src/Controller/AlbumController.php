@@ -152,13 +152,16 @@ class albumController extends AbstractController
             }
         }
 
+        $artist = $dataMiddellware->getArtist();
         $album = new album;
 
-        $album->setArtist($dataMiddellware->getArtist());
+        $album->addAlbumArtist($artist);
+
         $album->setVisibility($data['visibility']);
         $album->setTitle($data['title']);
         $album->setCategorie($providedCategories);
         $album->setAlbumCreateAt(new \DateTimeImmutable());
+
 
         $this->entityManager->persist($album);
         $this->entityManager->flush();

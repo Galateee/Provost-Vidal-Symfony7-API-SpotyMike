@@ -22,3 +22,6 @@
 Questions:  
 Est ce que le /user doit créer un utilisateur?  / Qu'est ce que /user est censé faire?  
 Il y a 2 route /artist, une pour la création et l'autre pour la mise à jour comment faire?  
+
+fix:
+problème au niveau de l'architecture de la relation user artist -> la table user_artist n'est pas utiliser ou ne fonctionne pas raison ??? + impossible de trouver une solution

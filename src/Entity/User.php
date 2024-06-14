@@ -23,27 +23,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 55)]
     private ?string $lastname = null;
-
-    #[ORM\Column(length: 55, nullable: true)]
-    private ?string $sexe = null;
-
-    #[ORM\Column(length: 55)]
-    private ?\DateTimeImmutable $dateBirth = null;
-
+    
     #[ORM\Column(length: 80, unique: true)]
     private ?string $email = null;
-
-    #[ORM\Column(length: 15, nullable: true)]
-    private ?string $tel = "";
-
+    
     #[ORM\Column(length: 90)]
     private ?string $password = null;
-
-    #[ORM\Column(length: 1, nullable: true)]
-    private ?int $nbTry = 0;
-
+    
+    #[ORM\Column(length: 15, nullable: true)]
+    private ?string $tel = "";
+    
+    #[ORM\Column(length: 55, nullable: true)]
+    private ?string $sexe = null;
+    
+    #[ORM\Column(length: 55)]
+    private ?\DateTimeImmutable $dateBirth = null;
+    
     #[ORM\Column(type: Types::BOOLEAN)]
     private ?bool $isActive = true;
+    
+    #[ORM\Column(length: 1, nullable: true)]
+    private ?int $nbTry = 0;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $lastTryTimestamp = null;
@@ -54,8 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updateAt = null;
 
-
-    #[ORM\OneToOne(mappedBy: 'User_idUser', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Artist $artist = null;
 
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'Artist_isFollow')]
@@ -99,31 +98,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSexe(): ?string
-    {
-        return $this->sexe;
-    }
-
-    public function setSexe(string $sexe): static
-    {
-        $this->sexe =  $sexe;
-
-        return $this;
-    }
-
-    public function getDateBirth(): ?\DateTimeImmutable
-    {
-        return $this->dateBirth;
-    }
-
-    public function setDateBirth(string $dateBirth): self
-    {
-        $this->dateBirth = new \DateTimeImmutable($dateBirth);
-
-        return $this;
-    }
-
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -148,14 +122,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getNbTry(): ?int
+    public function getTel(): ?string
     {
-        return $this->nbTry;
+        return $this->tel;
     }
 
-    public function setNbTry(?int $nbTry): static
+    public function setTel(?string $tel): static
     {
-        $this->nbTry =  $nbTry;
+        $this->tel = $tel !== null ? $tel : "";
+
+        return $this;
+    }
+
+    public function getSexe(): ?string
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(string $sexe): static
+    {
+        $this->sexe =  $sexe;
+
+        return $this;
+    }
+
+    public function getDateBirth(): ?\DateTimeImmutable
+    {
+        return $this->dateBirth;
+    }
+
+    public function setDateBirth(string $dateBirth): self
+    {
+        $this->dateBirth = new \DateTimeImmutable($dateBirth);
 
         return $this;
     }
@@ -172,14 +170,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTel(): ?string
+    public function getNbTry(): ?int
     {
-        return $this->tel;
+        return $this->nbTry;
     }
 
-    public function setTel(?string $tel): static
+    public function setNbTry(?int $nbTry): static
     {
-        $this->tel = $tel !== null ? $tel : "";
+        $this->nbTry =  $nbTry;
 
         return $this;
     }

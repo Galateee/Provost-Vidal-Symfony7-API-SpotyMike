@@ -15,10 +15,6 @@ class Album
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'albums', cascade: ['remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Artist $artist = null;
-
     #[ORM\Column(length: 90)]
     private ?string $title = null;
 
@@ -31,13 +27,20 @@ class Album
     #[ORM\Column]
     private ?\DateTimeImmutable $createAt = null;
 
+    #[ORM\ManyToMany(targetEntity: Artist::class, mappedBy: 'artist_album')]
+    private Collection $album_artist;
 
-    #[ORM\OneToMany(targetEntity: Song::class, mappedBy: 'album')]
-    private Collection $song;
+    #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'song_album')]
+    private Collection $album_song;
+
+    #[ORM\ManyToMany(targetEntity: Playlist::class, mappedBy: 'playlist_album')]
+    private Collection $album_playlist;
 
     public function __construct()
     {
-        $this->song = new ArrayCollection();
+        $this->album_artist = new ArrayCollection();
+        $this->album_song = new ArrayCollection();
+        $this->album_playlist = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -45,18 +48,6 @@ class Album
         return $this->id;
     }
 
-    public function getArtist(): ?Artist
-    {
-        return $this->artist;
-    }
-
-    public function setArtist(?Artist $artist): static
-    {
-        $this->artist = $artist;
-
-        return $this;
-    }
-    
     public function getTitle(): ?string
     {
         return $this->title;
@@ -106,7 +97,7 @@ class Album
     }
 
 
-    public function serializer($children = false)
+    public function serializer()
     {
         return [
             "id" => $this->getId(),
@@ -114,36 +105,80 @@ class Album
             "categorie" => $this->getCategorie(),
             "visibility" => $this->getVisibility(),
             "creatAt" => $this->getAlbumCreateAt(),
-            "artist" => $this->getArtist()
         ];
     }
 
     /**
-     * @return Collection<int, Song>
+     * @return Collection<int, Artist>
      */
-    public function getSongIdSong(): Collection
+    public function getAlbumArtist(): Collection
     {
-        return $this->song;
+        return $this->album_artist;
     }
 
-    public function addSongIdSong(Song $song): static
+    public function addAlbumArtist(Artist $albumArtist): static
     {
-        if (!$this->song->contains($song)) {
-            $this->song->add($song);
-            $song->setAlbum($this);
+        if (!$this->album_artist->contains($albumArtist)) {
+            $this->album_artist->add($albumArtist);
+            $albumArtist->addArtistAlbum($this);
         }
 
         return $this;
     }
 
-    public function removeSongIdSong(Song $song): static
+    public function removeAlbumArtist(Artist $albumArtist): static
     {
-        if ($this->song->removeElement($song)) {
-            // set the owning side to null (unless already changed)
-            if ($song->getAlbum() === $this) {
-                $song->setAlbum(null);
-            }
+        if ($this->album_artist->removeElement($albumArtist)) {
+            $albumArtist->removeArtistAlbum($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, song>
+     */
+    public function getAlbumSong(): Collection
+    {
+        return $this->album_song;
+    }
+
+    public function addAlbumSong(song $albumsong): static
+    {
+        if (!$this->album_song->contains($albumsong)) {
+            $this->album_song->add($albumsong);
+        }
+
+        return $this;
+    }
+
+    public function removeAlbumSong(song $albumsong): static
+    {
+        $this->album_song->removeElement($albumsong);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Playlist>
+     */
+    public function getAlbumPlaylist(): Collection
+    {
+        return $this->album_playlist;
+    }
+
+    public function addAlbumPlaylist(Playlist $albumPlaylist): static
+    {
+        if (!$this->album_playlist->contains($albumPlaylist)) {
+            $this->album_playlist->add($albumPlaylist);
+        }
+
+        return $this;
+    }
+
+    public function removeAlbumPlaylist(Playlist $albumPlaylist): static
+    {
+        $this->album_playlist->removeElement($albumPlaylist);
 
         return $this;
     }

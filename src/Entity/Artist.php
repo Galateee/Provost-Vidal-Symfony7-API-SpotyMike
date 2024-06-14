@@ -35,11 +35,8 @@ class Artist
     #[ORM\Column(type: Types::BOOLEAN)]
     private ?bool $isActive = true;
 
-    #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'Artist_idUser')]
-    private Collection $songs;
-
-    #[ORM\OneToMany(targetEntity: Album::class, mappedBy: 'artist_User_idUser')]
-    private Collection $albums;
+    #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'album_artist')]
+    private Collection $artist_album;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'user_follow_artist')]
     private Collection $Artist_isFollow;
@@ -49,8 +46,7 @@ class Artist
 
     public function __construct()
     {
-        $this->songs = new ArrayCollection();
-        $this->albums = new ArrayCollection();
+        $this->artist_album = new ArrayCollection();
         $this->Artist_isFollow = new ArrayCollection();
         $this->Artist_Has_Label = new ArrayCollection();
     }
@@ -65,7 +61,7 @@ class Artist
         return $this->user;
     }
 
-    public function setUser(User $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
@@ -132,72 +128,17 @@ class Artist
         return $this;
     }
 
-    /**
-     * @return Collection<int, Song>
-     */
-    public function getSongs(): Collection
-    {
-        return $this->songs;
-    }
-
-    public function addSong(Song $song): static
-    {
-        if (!$this->songs->contains($song)) {
-            $this->songs->add($song);
-            $song->addArtistIdUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSong(Song $song): static
-    {
-        if ($this->songs->removeElement($song)) {
-            $song->removeArtistIdUser($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Album>
-     */
-    public function getAlbums(): Collection
-    {
-        return $this->albums;
-    }
-
-    public function addAlbum(Album $album): static
-    {
-        if (!$this->albums->contains($album)) {
-            $this->albums->add($album);
-            $album->setArtist($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAlbum(Album $album): static
-    {
-        if ($this->albums->removeElement($album)) {
-            // set the owning side to null (unless already changed)
-            if ($album->getArtist() === $this) {
-                $album->setArtist(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function serializer($children = false)
+    public function serializer()
     {
         return [
             "id" => $this->getId(),
-            "idUser" => ($children) ? $this->getUser() : null,
+            "user" => $this->getUser() ? $this->getUser()->serializer() : [],
             "fullname" => $this->getfullname(),
             "label" => $this->getLabel(),
             "description" => $this->getDescription(),
-            "songs" => $this->getSongs()
+            "artist.createdAt" => $this->getArtistCreateAt(), //->format('c')
+            "isActive" => $this->getArtistIsActive(),
+            "album" => $this->getArtistAlbum()
         ];
     }
 
@@ -212,9 +153,33 @@ class Artist
             "sexe" => $this->getUser()->getSexe(),
             "dateBirth" => $this->getUser()->getDateBirth()->format('c'),
             "artist.createdAt" => $this->getArtistCreateAt()->format('c'),
-            "albums" => $this->getAlbums(),
+            "albums" => $this->getArtistAlbum(),
 
         ];
+    }
+
+        /**
+     * @return Collection<int, Album>
+     */
+    public function getArtistAlbum(): Collection
+    {
+        return $this->artist_album;
+    }
+
+    public function addArtistAlbum(Album $artistAlbum): static
+    {
+        if (!$this->artist_album->contains($artistAlbum)) {
+            $this->artist_album->add($artistAlbum);
+        }
+
+        return $this;
+    }
+
+    public function removeArtistAlbum(Album $artistAlbum): static
+    {
+        $this->artist_album->removeElement($artistAlbum);
+
+        return $this;
     }
 
     /**
